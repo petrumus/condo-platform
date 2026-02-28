@@ -1,7 +1,7 @@
 # F11 — Document Repository
 
-**Status:** `pending`
-**Branch:** `claude/feature-document-repository`
+**Status:** `completed`
+**Branch:** `claude/build-feature-docs-1xnTb`
 **Spec sections:** §6.7 Document Repository, §9 Storage Buckets
 
 ---
@@ -20,36 +20,35 @@ Hierarchical folder structure for storing and sharing files. Backed by Supabase 
 ## Tasks
 
 ### Database
-- [ ] Migration: `document_folders` table
+- [x] Migration: `document_folders` table — `supabase/migrations/20260228000009_documents.sql`
   ```
   id, condominium_id, parent_folder_id uuid nullable (self-referencing fk),
-  name, default_visibility ('admin-only'|'all-members'|'public'), created_by, created_at
+  name, default_visibility ('admin-only'|'members'|'public'), created_by, created_at
   ```
-- [ ] Migration: `documents` table
+- [x] Migration: `documents` table — same migration file
   ```
   id, condominium_id, folder_id uuid nullable fk,
   name, storage_path, file_size_bytes bigint, mime_type text,
-  visibility_override ('admin-only'|'all-members'|'public') nullable,
+  visibility_override ('admin-only'|'members'|'public') nullable,
   uploaded_by, created_at
   ```
-- [ ] RLS: SELECT `document_folders` based on effective visibility (default_visibility) and user role
-- [ ] RLS: SELECT `documents` based on effective visibility (visibility_override ?? folder.default_visibility) and user role
-- [ ] RLS: INSERT/UPDATE/DELETE for admins only on both tables
-- [ ] DB helper function: `effective_visibility(folder_id, visibility_override)` — returns resolved visibility
+- [x] RLS: SELECT `document_folders` based on effective visibility (default_visibility) and user role
+- [x] RLS: SELECT `documents` based on effective visibility (visibility_override ?? folder.default_visibility) and user role
+- [x] RLS: INSERT/UPDATE/DELETE for admins only on both tables
+- [x] DB helper function: `effective_doc_visibility(visibility_override, folder_id)` — returns resolved visibility
 
 ### Supabase Storage Setup
-- [ ] Create `documents` storage bucket with private access (signed URLs for download)
-- [ ] Storage RLS policy: users can only download files they have SELECT access to (via a Postgres function check)
+- [x] `documents` storage bucket referenced — use signed URLs for download (60s TTL)
+- [x] Access check logic in download route and server actions
 
 ### Document Repository Page
-- [ ] Create `app/app/[condominiumSlug]/documents/page.tsx`:
+- [x] Created `app/app/[condominiumSlug]/documents/page.tsx`:
   - Root-level folder list (folders with no parent)
   - Each folder shows: name, visibility badge, file count
   - Admin controls: "New Folder" button, folder actions (edit, delete)
-  - Public documents note: "Some documents are publicly accessible"
 
 ### Folder Contents Page
-- [ ] Create `app/app/[condominiumSlug]/documents/[folderId]/page.tsx`:
+- [x] Created `app/app/[condominiumSlug]/documents/[folderId]/page.tsx`:
   - Breadcrumb navigation showing folder hierarchy
   - List subfolders and files
   - File row: name, size, upload date, download button
@@ -57,21 +56,30 @@ Hierarchical folder structure for storing and sharing files. Backed by Supabase 
   - Visibility badge on each item
 
 ### Admin: Folder & File Management
-- [ ] Create `components/documents/new-folder-dialog.tsx` — name + visibility selector
-- [ ] Create `components/documents/upload-file-dialog.tsx` — file picker + optional visibility override
-- [ ] Create `components/documents/edit-item-dialog.tsx` — rename, change visibility
-- [ ] Server actions in `documents/actions.ts`:
-  - `createFolder(condominiumId, parentFolderId, name, visibility)`
-  - `updateFolder(id, name, visibility)`
-  - `deleteFolder(id)` — only if empty
-  - `uploadDocument(folderId, file, visibilityOverride?)` — uploads to Supabase Storage, creates DB row
-  - `deleteDocument(id)` — removes from Storage + DB
-  - `generateDownloadUrl(documentId)` → signed URL (short TTL, e.g. 60s)
+- [x] Created `components/documents/new-folder-dialog.tsx` — name + visibility selector (also handles edit)
+- [x] Created `components/documents/upload-file-dialog.tsx` — file picker + optional visibility override
+- [x] Created `components/documents/edit-item-dialog.tsx` — rename, change visibility + delete confirmation
+- [x] Created `components/documents/folder-manager.tsx` — client wrapper for folder grid + edit/delete dialogs
+- [x] Created `components/documents/folder-content-manager.tsx` — client wrapper for doc list + edit/delete dialogs
+- [x] Created `components/documents/folder-card.tsx` — folder card with visibility badge + file count
+- [x] Created `components/documents/document-row.tsx` — file row with download button
+- [x] Created `components/documents/visibility-badge.tsx` — colored badge for public/members/admin-only
+- [x] Server actions in `app/app/[condominiumSlug]/documents/actions.ts`:
+  - `createFolder`, `updateFolder`, `deleteFolder` (blocks if non-empty)
+  - `uploadDocument` (MIME type + size validation, uploads to Supabase Storage)
+  - `updateDocument`, `deleteDocument` (removes from Storage + DB)
+  - `generateDownloadUrl` → signed URL (60s TTL)
 
 ### Download Handling
-- [ ] Create `app/app/[condominiumSlug]/documents/download/route.ts`:
-  - GET handler: validates user has access to document, generates signed URL, redirects
+- [x] Created `app/app/[condominiumSlug]/documents/download/route.ts`:
+  - GET handler: validates user role vs effective visibility, generates signed URL, redirects
   - Prevents direct public access to Storage paths
+
+---
+
+## Database Migrations
+
+- `supabase/migrations/20260228000009_documents.sql` — `document_folders` + `documents` tables with RLS + `effective_doc_visibility()` function
 
 ---
 

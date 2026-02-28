@@ -50,7 +50,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000005_super_admin.sql   ← condominiums.status + audit_logs + profiles RLS (F17)
 │   ├── 20260228000006_projects.sql      ← projects + project_updates tables with RLS (F07)
 │   ├── 20260228000007_initiatives.sql   ← initiatives + initiative_attachments tables with RLS (F09)
-│   └── 20260228000008_ballots.sql       ← ballots + votes tables + has_voted() function (F10)
+│   ├── 20260228000008_ballots.sql       ← ballots + votes tables + has_voted() function (F10)
+│   └── 20260228000009_documents.sql     ← document_folders + documents tables with RLS + effective_doc_visibility() (F11)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -93,6 +94,11 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │       ├── page.tsx             ← Ballot detail + voting interface (F10)
 │       │       ├── edit/page.tsx        ← Edit draft ballot, admin only (F10)
 │       │       └── results/page.tsx     ← Results with tally + CSV export (F10)
+│       ├── documents/
+│       │   ├── actions.ts               ← Documents server actions (F11)
+│       │   ├── page.tsx                 ← Root folder list (F11)
+│       │   ├── [folderId]/page.tsx      ← Folder contents with breadcrumb (F11)
+│       │   └── download/route.ts        ← Signed URL redirect handler (F11)
 │   ├── invite/[token]/
 │   │   ├── page.tsx                 ← Invitation acceptance page
 │   │   └── actions.ts               ← Accept invitation server action
@@ -162,6 +168,15 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── dashboard/
 │   │   ├── nav-card.tsx             ← Navigation card (icon + title + description)
 │   │   └── activity-feed.tsx        ← Recent activity feed (announcements, ballots, initiatives)
+│   ├── documents/
+│   │   ├── visibility-badge.tsx         ← Colored badge for public/members/admin-only (F11)
+│   │   ├── folder-card.tsx              ← Folder card with visibility badge + file count (F11)
+│   │   ├── document-row.tsx             ← File row with inline download button (F11)
+│   │   ├── folder-manager.tsx           ← Client wrapper for folder grid + edit/delete dialogs (F11)
+│   │   ├── folder-content-manager.tsx   ← Client wrapper for doc list + edit/delete dialogs (F11)
+│   │   ├── new-folder-dialog.tsx        ← Create/edit folder dialog (F11)
+│   │   ├── upload-file-dialog.tsx       ← File upload dialog with visibility override (F11)
+│   │   └── edit-item-dialog.tsx         ← Edit/delete document dialogs (F11)
 │   └── ui/                          ← shadcn/ui components (button, input, etc.)
 ├── package.json
 ├── next.config.ts
@@ -365,7 +380,7 @@ When a feature branch is complete:
 | F08 | Condominium Administration Page | `completed` | `claude/build-condo-admin-page-9Fjc5` |
 | F09 | Initiatives | `completed` | `claude/build-initiatives-feature-780sD` |
 | F10 | Ballots & Voting | `completed` | `claude/build-ballots-voting-5PEV8` |
-| F11 | Document Repository | `pending` | — |
+| F11 | Document Repository | `completed` | `claude/build-feature-docs-1xnTb` |
 | F12 | Announcements | `pending` | — |
 | F13 | Maintenance Requests | `pending` | — |
 | F14 | Units & Ownership | `pending` | — |
@@ -400,3 +415,4 @@ When a feature branch is complete:
 | 2026-02-28 | F08 Condominium Administration Page completed on `claude/build-condo-admin-page-9Fjc5`: governance team page, 2 components (GovernanceMemberCard, GovernanceGrid), getGovernanceMembers query, admin "Manage Team" button, empty state |
 | 2026-02-28 | F09 Initiatives completed on `claude/build-initiatives-feature-780sD`: migration for initiatives + initiative_attachments with RLS, initiatives list with status tabs, submit form, detail page with admin controls (approve/reject modal/convert), admin review queue, 4 new components, DB types updated |
 | 2026-02-28 | F10 Ballots & Voting completed on `claude/build-ballots-voting-5PEV8`: migration for ballots + votes tables with RLS + has_voted() function, ballots list with Open/Upcoming/Closed/Draft tabs, ballot detail with voting interface (yes/no, single, multi-choice), admin tally, lifecycle controls (Draft→Open→Closed→Results Published), results page with quorum assessment, CSV export, 6 new components |
+| 2026-02-28 | F11 Document Repository completed on `claude/build-feature-docs-1xnTb`: migration for document_folders + documents tables with RLS + effective_doc_visibility() DB function, root folder list page, folder contents page with breadcrumb + subfolder navigation, signed-URL download route, 8 new components (visibility-badge, folder-card, document-row, folder-manager, folder-content-manager, new-folder-dialog, upload-file-dialog, edit-item-dialog), MIME type + file size validation on upload |
