@@ -1,7 +1,7 @@
 # F05 — Dashboard / Home Page
 
-**Status:** `pending`
-**Branch:** `claude/feature-dashboard`
+**Status:** `completed`
+**Branch:** `claude/build-fifth-feature-F8aWs`
 **Spec sections:** §6.1 Home Page / Dashboard
 
 ---
@@ -20,7 +20,7 @@ The dashboard is the landing page for authenticated users in their condominium w
 ## Tasks
 
 ### Dashboard Page
-- [ ] Create `app/app/[condominiumSlug]/dashboard/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/dashboard/page.tsx`:
   - Display condominium name, logo, and description at the top
   - Navigation card grid (see cards below)
   - Recent activity feed section
@@ -28,30 +28,30 @@ The dashboard is the landing page for authenticated users in their condominium w
 
 ### Navigation Cards
 Each card links to a section and shows a relevant icon + title:
-- [ ] Yearly Budget Plan → `/budget/[currentYear]`
-- [ ] Projects → `/projects`
-- [ ] Administration → `/administration`
-- [ ] Documents → `/documents`
-- [ ] Initiatives → `/initiatives`
-- [ ] Ballots / Voting → `/ballots`
-- [ ] Maintenance Requests → `/maintenance`
-- [ ] Announcements → `/announcements`
+- [x] Yearly Budget Plan → `/budget/[currentYear]`
+- [x] Projects → `/projects`
+- [x] Administration → `/administration`
+- [x] Documents → `/documents`
+- [x] Initiatives → `/initiatives`
+- [x] Ballots / Voting → `/ballots`
+- [x] Maintenance Requests → `/maintenance`
+- [x] Announcements → `/announcements`
 
 Create `components/dashboard/nav-card.tsx` — reusable card component with icon, title, description, and link.
 
 ### Recent Activity Feed
-- [ ] Create `components/dashboard/activity-feed.tsx`
-- [ ] Query and display (server-side):
+- [x] Create `components/dashboard/activity-feed.tsx`
+- [x] Query and display (server-side):
   - Latest 3 announcements (title + published date)
   - Open ballots (title + close date)
   - Newly approved initiatives (title + approved date)
-- [ ] Each activity item links to the relevant detail page
-- [ ] Show "No recent activity" empty state if nothing to show
+- [x] Each activity item links to the relevant detail page
+- [x] Show "No recent activity" empty state if nothing to show
 
 ### Redirect Logic
-- [ ] Redirect `/app/[condominiumSlug]` → `/app/[condominiumSlug]/dashboard`
-- [ ] After successful login, redirect to the user's condominium dashboard (if they have exactly one membership)
-- [ ] If user has multiple memberships, show a condominium picker page at `/app`
+- [x] Redirect `/app/[condominiumSlug]` → `/app/[condominiumSlug]/dashboard`
+- [x] After successful login, redirect to the user's condominium dashboard (if they have exactly one membership)
+- [x] If user has multiple memberships, show a condominium picker page at `/app`
 
 ---
 
