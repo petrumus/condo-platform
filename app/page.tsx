@@ -85,6 +85,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             Contact your condominium administrator.
           </span>
         </p>
+
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          <a href="/privacy" className="underline hover:text-foreground">
+            Privacy Policy
+          </a>
+          {" · "}
+          <a href="/terms" className="underline hover:text-foreground">
+            Terms of Service
+          </a>
+        </p>
       </div>
     </div>
   )
