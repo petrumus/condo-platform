@@ -540,8 +540,10 @@ export type Database = {
           folder_id: string | null
           name: string
           storage_path: string
-          visibility_override: "public" | "members" | null
-          uploaded_by: string
+          file_size_bytes: number | null
+          mime_type: string | null
+          visibility_override: "public" | "members" | "admin-only" | null
+          uploaded_by: string | null
           created_at: string
         }
         Insert: {
@@ -550,8 +552,10 @@ export type Database = {
           folder_id?: string | null
           name: string
           storage_path: string
-          visibility_override?: "public" | "members" | null
-          uploaded_by: string
+          file_size_bytes?: number | null
+          mime_type?: string | null
+          visibility_override?: "public" | "members" | "admin-only" | null
+          uploaded_by?: string | null
           created_at?: string
         }
         Update: {
@@ -560,8 +564,10 @@ export type Database = {
           folder_id?: string | null
           name?: string
           storage_path?: string
-          visibility_override?: "public" | "members" | null
-          uploaded_by?: string
+          file_size_bytes?: number | null
+          mime_type?: string | null
+          visibility_override?: "public" | "members" | "admin-only" | null
+          uploaded_by?: string | null
           created_at?: string
         }
         Relationships: [
@@ -587,21 +593,27 @@ export type Database = {
           condominium_id: string
           parent_folder_id: string | null
           name: string
-          default_visibility: "public" | "members"
+          default_visibility: "public" | "members" | "admin-only"
+          created_by: string | null
+          created_at: string
         }
         Insert: {
           id?: string
           condominium_id: string
           parent_folder_id?: string | null
           name: string
-          default_visibility?: "public" | "members"
+          default_visibility?: "public" | "members" | "admin-only"
+          created_by?: string | null
+          created_at?: string
         }
         Update: {
           id?: string
           condominium_id?: string
           parent_folder_id?: string | null
           name?: string
-          default_visibility?: "public" | "members"
+          default_visibility?: "public" | "members" | "admin-only"
+          created_by?: string | null
+          created_at?: string
         }
         Relationships: [
           {
