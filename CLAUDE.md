@@ -75,6 +75,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │   └── [id]/
 │       │       ├── page.tsx             ← Project detail + progress updates (F07)
 │       │       └── edit/page.tsx        ← Edit project, admin only (F07)
+│       ├── administration/
+│       │   └── page.tsx                 ← Governance team page (F08)
 │   ├── invite/[token]/
 │   │   ├── page.tsx                 ← Invitation acceptance page
 │   │   └── actions.ts               ← Accept invitation server action
@@ -108,11 +110,16 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── supabase/server.ts           ← Server Supabase client
 │   ├── supabase/middleware.ts        ← Middleware session update helper
 │   ├── types/database.ts            ← Generated Supabase DB types
+│   ├── queries/
+│   │   └── administration.ts        ← getGovernanceMembers query (F08)
 │   ├── types/index.ts               ← Shared type exports
 │   └── utils.ts                     ← cn() and other utilities
 ├── components/
 │   ├── logo.tsx                     ← SVG logo component
 │   ├── layout/navbar.tsx            ← Top navigation bar
+│   ├── administration/
+│   │   ├── governance-member-card.tsx ← Avatar + name + title + email card (F08)
+│   │   └── governance-grid.tsx      ← Responsive card grid (F08)
 │   ├── budget/
 │   │   ├── budget-table.tsx         ← Read-only budget line items table (F06)
 │   │   ├── budget-editor.tsx        ← Interactive budget editor client component (F06)
@@ -327,7 +334,7 @@ When a feature branch is complete:
 | F05 | Dashboard / Home Page | `completed` | `claude/build-fifth-feature-F8aWs` |
 | F06 | Yearly Budget Plan | `completed` | `claude/build-yearly-budget-plan-nypk2` |
 | F07 | Projects | `completed` | `claude/build-projects-feature-Gbgrv` |
-| F08 | Condominium Administration Page | `pending` | — |
+| F08 | Condominium Administration Page | `completed` | `claude/build-condo-admin-page-9Fjc5` |
 | F09 | Initiatives | `pending` | — |
 | F10 | Ballots & Voting | `pending` | — |
 | F11 | Document Repository | `pending` | — |
@@ -362,3 +369,4 @@ When a feature branch is complete:
 | 2026-02-28 | F17 Super Admin Panel completed on `claude/build-super-admin-panel-INiZo`: condominiums list+search, create/edit/suspend/reactivate/delete condominiums, member management, invite admin, audit log page, /suspended page, middleware suspended-check, migration for condominiums.status + audit_logs + profiles RLS |
 | 2026-02-28 | Hotfix on main: added error boundaries (`global-error.tsx`, `super-admin/error.tsx`), env var validation in `createServiceClient`, `.env.local` created for local dev. Root cause: missing `SUPABASE_SERVICE_ROLE_KEY` in Vercel env vars |
 | 2026-02-28 | F07 Projects completed on `claude/build-projects-feature-Gbgrv`: migration for projects + project_updates with RLS, projects list with status tabs, project detail with progress updates timeline, create/edit forms (admin), lifecycle status advancement, 6 new components |
+| 2026-02-28 | F08 Condominium Administration Page completed on `claude/build-condo-admin-page-9Fjc5`: governance team page, 2 components (GovernanceMemberCard, GovernanceGrid), getGovernanceMembers query, admin "Manage Team" button, empty state |
