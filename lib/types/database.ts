@@ -720,10 +720,11 @@ export type Database = {
           description: string | null
           category: string | null
           location: string | null
-          priority: "low" | "medium" | "high" | "urgent"
-          status: string
+          priority: "low" | "medium" | "high"
+          status: "open" | "in_review" | "in_progress" | "resolved" | "closed"
           admin_notes: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -733,10 +734,11 @@ export type Database = {
           description?: string | null
           category?: string | null
           location?: string | null
-          priority?: "low" | "medium" | "high" | "urgent"
-          status?: string
+          priority?: "low" | "medium" | "high"
+          status?: "open" | "in_review" | "in_progress" | "resolved" | "closed"
           admin_notes?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -746,10 +748,11 @@ export type Database = {
           description?: string | null
           category?: string | null
           location?: string | null
-          priority?: "low" | "medium" | "high" | "urgent"
-          status?: string
+          priority?: "low" | "medium" | "high"
+          status?: "open" | "in_review" | "in_progress" | "resolved" | "closed"
           admin_notes?: string | null
           created_at?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -757,6 +760,44 @@ export type Database = {
             columns: ["condominium_id"]
             isOneToOne: false
             referencedRelation: "condominiums"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      maintenance_attachments: {
+        Row: {
+          id: string
+          request_id: string
+          storage_path: string
+          file_name: string
+          file_size_bytes: number | null
+          uploaded_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          request_id: string
+          storage_path: string
+          file_name: string
+          file_size_bytes?: number | null
+          uploaded_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          request_id?: string
+          storage_path?: string
+          file_name?: string
+          file_size_bytes?: number | null
+          uploaded_by?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_attachments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_requests"
             referencedColumns: ["id"]
           }
         ]
