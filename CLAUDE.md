@@ -48,7 +48,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000003_profiles.sql      ← profiles table + sync trigger (F04)
 │   ├── 20260228000004_budget.sql        ← budget_plans + budget_line_items (F06)
 │   ├── 20260228000005_super_admin.sql   ← condominiums.status + audit_logs + profiles RLS (F17)
-│   └── 20260228000006_projects.sql      ← projects + project_updates tables with RLS (F07)
+│   ├── 20260228000006_projects.sql      ← projects + project_updates tables with RLS (F07)
+│   └── 20260228000007_initiatives.sql   ← initiatives + initiative_attachments tables with RLS (F09)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -77,6 +78,12 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │       └── edit/page.tsx        ← Edit project, admin only (F07)
 │       ├── administration/
 │       │   └── page.tsx                 ← Governance team page (F08)
+│       ├── initiatives/
+│       │   ├── actions.ts               ← Initiatives server actions (F09)
+│       │   ├── page.tsx                 ← Initiatives list with status tabs (F09)
+│       │   ├── new/page.tsx             ← Submit initiative form (F09)
+│       │   ├── review/page.tsx          ← Admin review queue (F09)
+│       │   └── [id]/page.tsx            ← Initiative detail + admin controls (F09)
 │   ├── invite/[token]/
 │   │   ├── page.tsx                 ← Invitation acceptance page
 │   │   └── actions.ts               ← Accept invitation server action
@@ -124,6 +131,11 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── budget-table.tsx         ← Read-only budget line items table (F06)
 │   │   ├── budget-editor.tsx        ← Interactive budget editor client component (F06)
 │   │   └── year-selector.tsx        ← Year navigation for budgets (F06)
+│   ├── initiatives/
+│   │   ├── initiative-status-badge.tsx  ← Colored status badge (F09)
+│   │   ├── initiative-card.tsx          ← Initiative list card (F09)
+│   │   ├── initiative-form.tsx          ← Submit initiative form (F09)
+│   │   └── admin-initiative-actions.tsx ← Admin approve/reject/convert controls (F09)
 │   ├── projects/
 │   │   ├── status-badge.tsx         ← Colored badge for each project status (F07)
 │   │   ├── project-card.tsx         ← Project list card (F07)
@@ -335,7 +347,7 @@ When a feature branch is complete:
 | F06 | Yearly Budget Plan | `completed` | `claude/build-yearly-budget-plan-nypk2` |
 | F07 | Projects | `completed` | `claude/build-projects-feature-Gbgrv` |
 | F08 | Condominium Administration Page | `completed` | `claude/build-condo-admin-page-9Fjc5` |
-| F09 | Initiatives | `pending` | — |
+| F09 | Initiatives | `completed` | `claude/build-initiatives-feature-780sD` |
 | F10 | Ballots & Voting | `pending` | — |
 | F11 | Document Repository | `pending` | — |
 | F12 | Announcements | `pending` | — |
@@ -370,3 +382,4 @@ When a feature branch is complete:
 | 2026-02-28 | Hotfix on main: added error boundaries (`global-error.tsx`, `super-admin/error.tsx`), env var validation in `createServiceClient`, `.env.local` created for local dev. Root cause: missing `SUPABASE_SERVICE_ROLE_KEY` in Vercel env vars |
 | 2026-02-28 | F07 Projects completed on `claude/build-projects-feature-Gbgrv`: migration for projects + project_updates with RLS, projects list with status tabs, project detail with progress updates timeline, create/edit forms (admin), lifecycle status advancement, 6 new components |
 | 2026-02-28 | F08 Condominium Administration Page completed on `claude/build-condo-admin-page-9Fjc5`: governance team page, 2 components (GovernanceMemberCard, GovernanceGrid), getGovernanceMembers query, admin "Manage Team" button, empty state |
+| 2026-02-28 | F09 Initiatives completed on `claude/build-initiatives-feature-780sD`: migration for initiatives + initiative_attachments with RLS, initiatives list with status tabs, submit form, detail page with admin controls (approve/reject modal/convert), admin review queue, 4 new components, DB types updated |
