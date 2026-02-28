@@ -169,6 +169,29 @@ audit_logs            (id, condominium_id, actor_id, action, entity_type, entity
 
 ---
 
+## Supabase Migrations Workflow
+
+SQL migrations live in `supabase/migrations/` and are numbered `YYYYMMDDNNNNNN_name.sql`.
+
+**How to apply them to your Supabase project (two options):**
+
+**Option A — Supabase CLI (recommended):**
+```bash
+supabase db push
+```
+This applies all pending migrations in order. Run once after pulling a branch with new migration files.
+
+**Option B — Supabase Dashboard:**
+Open the SQL editor in your Supabase project dashboard and paste + run each migration file manually in order.
+
+**Convention for Claude sessions:**
+- I write migration files as part of each feature and check them into the repo
+- After a feature branch is merged, you run `supabase db push` (or apply manually) once
+- I will always list which migration files were added in the feature's task file and in the PR description
+- I never apply migrations to your live Supabase project directly — that is always your step
+
+---
+
 ## Feature Branch Workflow
 
 1. When starting a new feature, create branch: `git checkout -b claude/feature-<slug>`
@@ -231,4 +254,6 @@ When a feature branch is complete:
 | 2026-02-28 | `claude/setup-project-structure-xDH6H` merged into `main` via PR (manually by user) |
 | 2026-02-28 | F01 Project Foundation completed on `claude/build-pending-feature-2x0EO`: Supabase clients, shadcn/ui components, middleware, TypeScript DB types, shell layouts |
 | 2026-02-28 | F02 Authentication completed on `claude/build-authentication-I46RN`: magic link login page, auth callback, confirm page, pending page, invite acceptance flow, middleware redirect logic, invitations DB migration |
+| 2026-02-28 | F02 Authentication completed: base schema migration added, TS type fix for invitations query, middleware guard fix; merged to main via PRs |
+| 2026-02-28 | Added Supabase Migrations Workflow section to CLAUDE.md |
 | 2026-02-28 | F03 Multi-tenancy & Condominium Workspace completed on `claude/build-multitenancy-condominium-sVQC8`: condominium slug routing, tenant layout, RLS migrations, helper functions (`is_super_admin`, `is_admin`, `get_my_condominium_id`), functional titles seed trigger |

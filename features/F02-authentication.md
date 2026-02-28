@@ -41,10 +41,14 @@ Authentication is handled entirely by Supabase Auth using Google OAuth. After fi
   - Redirect authenticated users with no membership → `/pending`
 
 ### Invitation Flow
-- [x] Create DB table migration: `invitations` (id, condominium_id, email, role, token, accepted_at, created_by, created_at)
+- [x] Create DB migration: `invitations` table (id, condominium_id, email, role, token, accepted_at, created_by, created_at)
 - [x] Create `app/invite/[token]/page.tsx` — invitation acceptance page
 - [x] Supabase Edge Function (or server action): send invitation email with unique token link
 - [x] Server action: accept invitation — creates `condominium_members` row, marks invitation accepted
+
+### Database Migrations (applied to Supabase)
+- [x] `supabase/migrations/20260228000000_base_schema.sql` — condominiums, functional_titles, condominium_members tables + RLS
+- [x] `supabase/migrations/20260228000001_invitations.sql` — invitations table + RLS
 
 ---
 
