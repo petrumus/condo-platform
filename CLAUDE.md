@@ -47,7 +47,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000002_condominium_helpers.sql
 │   ├── 20260228000003_profiles.sql      ← profiles table + sync trigger (F04)
 │   ├── 20260228000004_budget.sql        ← budget_plans + budget_line_items (F06)
-│   └── 20260228000005_super_admin.sql   ← condominiums.status + audit_logs + profiles RLS (F17)
+│   ├── 20260228000005_super_admin.sql   ← condominiums.status + audit_logs + profiles RLS (F17)
+│   └── 20260228000006_projects.sql      ← projects + project_updates tables with RLS (F07)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -67,6 +68,13 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │   ├── actions.ts               ← Budget server actions (F06)
 │       │   ├── [year]/page.tsx          ← Budget read view (F06)
 │       │   └── [year]/edit/page.tsx     ← Budget editor, admin only (F06)
+│       ├── projects/
+│       │   ├── actions.ts               ← Projects server actions (F07)
+│       │   ├── page.tsx                 ← Projects list with status tabs (F07)
+│       │   ├── new/page.tsx             ← Create project, admin only (F07)
+│       │   └── [id]/
+│       │       ├── page.tsx             ← Project detail + progress updates (F07)
+│       │       └── edit/page.tsx        ← Edit project, admin only (F07)
 │   ├── invite/[token]/
 │   │   ├── page.tsx                 ← Invitation acceptance page
 │   │   └── actions.ts               ← Accept invitation server action
@@ -109,6 +117,13 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── budget-table.tsx         ← Read-only budget line items table (F06)
 │   │   ├── budget-editor.tsx        ← Interactive budget editor client component (F06)
 │   │   └── year-selector.tsx        ← Year navigation for budgets (F06)
+│   ├── projects/
+│   │   ├── status-badge.tsx         ← Colored badge for each project status (F07)
+│   │   ├── project-card.tsx         ← Project list card (F07)
+│   │   ├── project-update-item.tsx  ← Timeline entry for progress updates (F07)
+│   │   ├── project-form.tsx         ← Shared create/edit form client component (F07)
+│   │   ├── post-update-form.tsx     ← Admin form to post progress update (F07)
+│   │   └── change-status-form.tsx   ← Admin button to advance project lifecycle (F07)
 │   ├── dashboard/
 │   │   ├── nav-card.tsx             ← Navigation card (icon + title + description)
 │   │   └── activity-feed.tsx        ← Recent activity feed (announcements, ballots, initiatives)
@@ -311,7 +326,7 @@ When a feature branch is complete:
 | F04 | User Roles & Members Management | `completed` | `claude/feature-user-roles-members` |
 | F05 | Dashboard / Home Page | `completed` | `claude/build-fifth-feature-F8aWs` |
 | F06 | Yearly Budget Plan | `completed` | `claude/build-yearly-budget-plan-nypk2` |
-| F07 | Projects | `pending` | — |
+| F07 | Projects | `completed` | `claude/build-projects-feature-Gbgrv` |
 | F08 | Condominium Administration Page | `pending` | — |
 | F09 | Initiatives | `pending` | — |
 | F10 | Ballots & Voting | `pending` | — |
@@ -346,3 +361,4 @@ When a feature branch is complete:
 | 2026-02-28 | F06 Yearly Budget Plan completed on `claude/build-yearly-budget-plan-nypk2`: migration for budget_plans + budget_line_items with RLS, read view with year selector, admin-only editor with inline add/remove/reorder, publish confirmation dialog, server actions |
 | 2026-02-28 | F17 Super Admin Panel completed on `claude/build-super-admin-panel-INiZo`: condominiums list+search, create/edit/suspend/reactivate/delete condominiums, member management, invite admin, audit log page, /suspended page, middleware suspended-check, migration for condominiums.status + audit_logs + profiles RLS |
 | 2026-02-28 | Hotfix on main: added error boundaries (`global-error.tsx`, `super-admin/error.tsx`), env var validation in `createServiceClient`, `.env.local` created for local dev. Root cause: missing `SUPABASE_SERVICE_ROLE_KEY` in Vercel env vars |
+| 2026-02-28 | F07 Projects completed on `claude/build-projects-feature-Gbgrv`: migration for projects + project_updates with RLS, projects list with status tabs, project detail with progress updates timeline, create/edit forms (admin), lifecycle status advancement, 6 new components |

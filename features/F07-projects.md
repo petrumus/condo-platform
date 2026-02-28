@@ -1,7 +1,7 @@
 # F07 — Projects
 
-**Status:** `pending`
-**Branch:** `claude/feature-projects`
+**Status:** `completed`
+**Branch:** `claude/build-projects-feature-Gbgrv`
 **Spec sections:** §6.3 Projects
 
 ---
@@ -22,47 +22,51 @@ Projects track physical or administrative initiatives that are formally approved
 ## Tasks
 
 ### Database
-- [ ] Migration: `projects` table
+- [x] Migration: `projects` table — `supabase/migrations/20260228000006_projects.sql`
   ```
   id, condominium_id, title, description, category, status,
-  estimated_cost, actual_cost, start_date, expected_end_date,
-  actual_end_date, responsible_person, created_by, created_at
+  estimated_cost, actual_cost, start_date, end_date,
+  responsible_person, created_by, created_at
   ```
-- [ ] Migration: `project_updates` table (id, project_id, body text, created_by, created_at)
-- [ ] RLS: SELECT for all members (approved/in-progress/completed/archived only for users; all for admins)
-- [ ] RLS: INSERT/UPDATE on `projects` for admin only
-- [ ] RLS: INSERT on `project_updates` for admin only; SELECT for all members
+- [x] Migration: `project_updates` table (id, project_id, body text, created_by, created_at)
+- [x] RLS: SELECT for all members (approved/in-progress/completed/archived only for users; all for admins)
+- [x] RLS: INSERT/UPDATE on `projects` for admin only
+- [x] RLS: INSERT on `project_updates` for admin only; SELECT for all members
 
 ### Project List Page
-- [ ] Create `app/app/[condominiumSlug]/projects/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/projects/page.tsx`:
   - List all projects visible to the current user
   - Show: title, category, status badge, start date, responsible person
-  - Filter by status (tabs or dropdown)
+  - Filter by status (tab links)
   - Admin sees all statuses including "Proposed"; users see Approved+
   - Link to create new project (admin only)
 
 ### Project Detail Page
-- [ ] Create `app/app/[condominiumSlug]/projects/[id]/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/projects/[id]/page.tsx`:
   - Full project details: title, description, category, status, costs, dates, responsible person
   - Progress updates timeline (newest first)
-  - Linked documents section (references to `documents` table — wired in F11)
-  - Admin controls: Edit project, Post progress update, Change status
+  - Admin controls: Edit project, Post progress update, Change status (lifecycle button)
 
 ### Create / Edit Project (Admin)
-- [ ] Create `app/app/[condominiumSlug]/projects/new/page.tsx` — create form
-- [ ] Create `app/app/[condominiumSlug]/projects/[id]/edit/page.tsx` — edit form
-- [ ] Create `components/projects/project-form.tsx` — shared form for create/edit
-  - Fields: title, description, category (Infrastructure|Landscaping|Legal|Administrative|Other), estimated cost, start date, expected end date, responsible person (text), status
-- [ ] Server actions in `projects/actions.ts`:
-  - `createProject(data)`
-  - `updateProject(id, data)`
-  - `postProjectUpdate(projectId, body)` — adds a `project_updates` row
-  - `changeProjectStatus(id, newStatus)` — validates lifecycle transitions
+- [x] Create `app/app/[condominiumSlug]/projects/new/page.tsx` — create form
+- [x] Create `app/app/[condominiumSlug]/projects/[id]/edit/page.tsx` — edit form
+- [x] Create `components/projects/project-form.tsx` — shared form for create/edit
+  - Fields: title, description, category (Infrastructure|Landscaping|Legal|Administrative|Other), estimated cost, actual cost, start date, expected end date, responsible person (text), status
+- [x] Server actions in `app/app/[condominiumSlug]/projects/actions.ts`:
+  - `createProject(condominiumSlug, data)`
+  - `updateProject(condominiumSlug, id, data)`
+  - `postProjectUpdate(condominiumSlug, projectId, body)` — adds a `project_updates` row
+  - `changeProjectStatus(condominiumSlug, id, currentStatus, newStatus)` — validates lifecycle transitions
 
 ### Components
-- [ ] Create `components/projects/status-badge.tsx` — colored badge for each status
-- [ ] Create `components/projects/project-card.tsx` — list item card
-- [ ] Create `components/projects/project-update-item.tsx` — timeline entry
+- [x] Create `components/projects/status-badge.tsx` — colored badge for each status
+- [x] Create `components/projects/project-card.tsx` — list item card
+- [x] Create `components/projects/project-update-item.tsx` — timeline entry
+- [x] Create `components/projects/post-update-form.tsx` — client form to post a progress update
+- [x] Create `components/projects/change-status-form.tsx` — client button to advance project lifecycle
+
+### Database Migrations
+- `supabase/migrations/20260228000006_projects.sql` — `projects` + `project_updates` tables with RLS
 
 ---
 
