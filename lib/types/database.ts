@@ -17,6 +17,7 @@ export type Database = {
           address: string | null
           description: string | null
           slug: string
+          status: "active" | "suspended"
           created_at: string
         }
         Insert: {
@@ -26,6 +27,7 @@ export type Database = {
           address?: string | null
           description?: string | null
           slug: string
+          status?: "active" | "suspended"
           created_at?: string
         }
         Update: {
@@ -35,6 +37,7 @@ export type Database = {
           address?: string | null
           description?: string | null
           slug?: string
+          status?: "active" | "suspended"
           created_at?: string
         }
         Relationships: []

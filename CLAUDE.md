@@ -46,7 +46,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000001_invitations.sql
 │   ├── 20260228000002_condominium_helpers.sql
 │   ├── 20260228000003_profiles.sql      ← profiles table + sync trigger (F04)
-│   └── 20260228000004_budget.sql        ← budget_plans + budget_line_items (F06)
+│   ├── 20260228000004_budget.sql        ← budget_plans + budget_line_items (F06)
+│   └── 20260228000005_super_admin.sql   ← condominiums.status + audit_logs + profiles RLS (F17)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -71,7 +72,22 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── pending/page.tsx             ← No-membership landing page
 │   ├── privacy/page.tsx             ← Privacy policy
 │   ├── terms/page.tsx               ← Terms of service
-│   └── super-admin/layout.tsx       ← Super-admin shell layout
+│   ├── super-admin/layout.tsx       ← Super-admin shell layout (nav links added in F17)
+│   ├── super-admin/condominiums/
+│   │   ├── page.tsx                 ← Condominiums list with search (F17)
+│   │   ├── actions.ts               ← Super-admin server actions (F17)
+│   │   ├── condominium-row-actions.tsx ← Row actions client component (F17)
+│   │   ├── new/page.tsx             ← Create condominium page (F17)
+│   │   ├── new/create-condominium-form.tsx ← Create form with slug generation (F17)
+│   │   └── [id]/
+│   │       ├── page.tsx             ← Condominium detail page (F17)
+│   │       ├── edit-condominium-form.tsx ← Edit form (F17)
+│   │       ├── invite-admin-form.tsx ← Invite admin by email (F17)
+│   │       ├── member-row.tsx       ← Member row with role select (F17)
+│   │       └── danger-zone.tsx      ← Suspend/delete with confirmation (F17)
+│   ├── super-admin/audit-log/
+│   │   └── page.tsx                 ← Platform-wide audit log (F17)
+│   └── suspended/page.tsx           ← Suspended condominium landing page (F17)
 ├── lib/
 │   ├── auth/get-user.ts             ← Server-side current user helper
 │   ├── auth/get-membership.ts       ← User membership query helper
@@ -303,7 +319,7 @@ When a feature branch is complete:
 | F14 | Units & Ownership | `pending` | — |
 | F15 | Notifications (In-App + Email) | `pending` | — |
 | F16 | Audit Log | `pending` | — |
-| F17 | Super Admin Panel | `pending` | — |
+| F17 | Super Admin Panel | `completed` | `claude/build-super-admin-panel-INiZo` |
 | F18 | Settings Pages | `pending` | — |
 
 ---
@@ -326,3 +342,4 @@ When a feature branch is complete:
 | 2026-02-28 | F05 Dashboard / Home Page started on `claude/build-fifth-feature-F8aWs`: NavCard component, ActivityFeed component, full dashboard page (condominium header, 8-card nav grid, recent activity), slug-root redirect, condominium picker page, middleware multi-membership redirect |
 | 2026-02-28 | Fix: middleware post-login redirect now checks super-admin role first and routes to `/super-admin/condominiums`, preventing super-admins with no memberships from landing on `/pending` |
 | 2026-02-28 | F06 Yearly Budget Plan completed on `claude/build-yearly-budget-plan-nypk2`: migration for budget_plans + budget_line_items with RLS, read view with year selector, admin-only editor with inline add/remove/reorder, publish confirmation dialog, server actions |
+| 2026-02-28 | F17 Super Admin Panel completed on `claude/build-super-admin-panel-INiZo`: condominiums list+search, create/edit/suspend/reactivate/delete condominiums, member management, invite admin, audit log page, /suspended page, middleware suspended-check, migration for condominiums.status + audit_logs + profiles RLS |
