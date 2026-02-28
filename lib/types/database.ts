@@ -731,6 +731,47 @@ export type Database = {
           }
         ]
       }
+      invitations: {
+        Row: {
+          id: string
+          condominium_id: string
+          email: string
+          role: "admin" | "user"
+          token: string
+          accepted_at: string | null
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          condominium_id: string
+          email: string
+          role: "admin" | "user"
+          token?: string
+          accepted_at?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          condominium_id?: string
+          email?: string
+          role?: "admin" | "user"
+          token?: string
+          accepted_at?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_condominium_id_fkey"
+            columns: ["condominium_id"]
+            isOneToOne: false
+            referencedRelation: "condominiums"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
