@@ -32,6 +32,7 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 ```
 /
 ├── CLAUDE.md                        ← This file (project guide & progress tracker)
+├── middleware.ts                     ← Next.js middleware (Supabase session refresh)
 ├── docs/
 │   ├── condominium-platform-spec.md ← Full product specification
 │   └── n8n-webhooks.md              ← n8n webhook payload reference (added in F15)
@@ -39,26 +40,45 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── F01-project-foundation.md
 │   ├── F02-authentication.md
 │   ├── F03-multitenancy-condominium.md
-│   ├── F04-user-roles-members.md
-│   ├── F05-dashboard.md
-│   ├── F06-budget-plan.md
-│   ├── F07-projects.md
-│   ├── F08-administration-page.md
-│   ├── F09-initiatives.md
-│   ├── F10-ballots-voting.md
-│   ├── F11-document-repository.md
-│   ├── F12-announcements.md
-│   ├── F13-maintenance-requests.md
-│   ├── F14-units-ownership.md
-│   ├── F15-notifications.md
-│   ├── F16-audit-log.md
-│   ├── F17-super-admin-panel.md
-│   └── F18-settings-pages.md
+│   └── F04–F18 ...                  ← Remaining features (pending)
+├── supabase/migrations/             ← SQL migrations applied via `supabase db push`
+│   ├── 20260228000000_base_schema.sql
+│   ├── 20260228000001_invitations.sql
+│   └── 20260228000002_condominium_helpers.sql
 ├── app/                             ← Next.js App Router
-│   ├── layout.tsx
-│   ├── page.tsx                     ← Marketing / login page (root)
+│   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
+│   ├── page.tsx                     ← Login page (Google OAuth)
 │   ├── globals.css
-│   └── favicon.ico
+│   ├── auth/
+│   │   ├── actions.ts               ← signInWithGoogle, signOut server actions
+│   │   ├── callback/route.ts        ← OAuth callback handler
+│   │   └── confirm/page.tsx         ← "Check your email" page
+│   ├── app/[condominiumSlug]/
+│   │   ├── layout.tsx               ← Tenant layout (navbar, context provider)
+│   │   └── dashboard/page.tsx       ← Dashboard placeholder
+│   ├── invite/[token]/
+│   │   ├── page.tsx                 ← Invitation acceptance page
+│   │   └── actions.ts               ← Accept invitation server action
+│   ├── pending/page.tsx             ← No-membership landing page
+│   ├── privacy/page.tsx             ← Privacy policy
+│   ├── terms/page.tsx               ← Terms of service
+│   └── super-admin/layout.tsx       ← Super-admin shell layout
+├── lib/
+│   ├── auth/get-user.ts             ← Server-side current user helper
+│   ├── auth/get-membership.ts       ← User membership query helper
+│   ├── condominium/get-condominium.ts ← Fetch condominium by slug
+│   ├── condominium/get-user-role.ts ← Get user's role in a condominium
+│   ├── context/condominium-context.tsx ← React context for tenant data
+│   ├── supabase/client.ts           ← Browser Supabase client
+│   ├── supabase/server.ts           ← Server Supabase client
+│   ├── supabase/middleware.ts        ← Middleware session update helper
+│   ├── types/database.ts            ← Generated Supabase DB types
+│   ├── types/index.ts               ← Shared type exports
+│   └── utils.ts                     ← cn() and other utilities
+├── components/
+│   ├── logo.tsx                     ← SVG logo component
+│   ├── layout/navbar.tsx            ← Top navigation bar
+│   └── ui/                          ← shadcn/ui components (button, input, etc.)
 ├── package.json
 ├── next.config.ts
 ├── tsconfig.json
@@ -253,7 +273,9 @@ When a feature branch is complete:
 | 2026-02-28 | Reorganized repo: spec moved to `docs/`; merge-to-main workflow added |
 | 2026-02-28 | `claude/setup-project-structure-xDH6H` merged into `main` via PR (manually by user) |
 | 2026-02-28 | F01 Project Foundation completed on `claude/build-pending-feature-2x0EO`: Supabase clients, shadcn/ui components, middleware, TypeScript DB types, shell layouts |
-| 2026-02-28 | F02 Authentication completed on `claude/build-authentication-I46RN`: magic link login page, auth callback, confirm page, pending page, invite acceptance flow, middleware redirect logic, invitations DB migration |
-| 2026-02-28 | F02 Authentication completed: base schema migration added, TS type fix for invitations query, middleware guard fix; merged to main via PRs |
+| 2026-02-28 | F02 Authentication completed on `claude/build-authentication-I46RN`: login page, auth callback, confirm page, pending page, invite acceptance flow, middleware redirect logic, invitations DB migration |
+| 2026-02-28 | F02 follow-up: base schema migration added, TS type fix for invitations query, middleware guard fix; merged to main via PRs |
+| 2026-02-28 | Auth switched from magic link to Google OAuth (PRs #11, #12); privacy/terms pages added |
 | 2026-02-28 | Added Supabase Migrations Workflow section to CLAUDE.md |
 | 2026-02-28 | F03 Multi-tenancy & Condominium Workspace completed on `claude/build-multitenancy-condominium-sVQC8`: condominium slug routing, tenant layout, RLS migrations, helper functions (`is_super_admin`, `is_admin`, `get_my_condominium_id`), functional titles seed trigger |
+| 2026-02-28 | PRs #13 and #14 fixed (middleware rename bug, missing privacy/terms pages, stale docs) and merged to main |

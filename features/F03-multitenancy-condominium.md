@@ -1,7 +1,7 @@
 # F03 — Multi-tenancy & Condominium Workspace
 
-**Status:** `pending`
-**Branch:** `claude/feature-multitenancy`
+**Status:** `completed`
+**Branch:** `claude/build-multitenancy-condominium-sVQC8`
 **Spec sections:** §4 Multi-Tenancy Architecture, §7 Data Model, §9 RLS
 
 ---
@@ -21,47 +21,34 @@ Every tenant workspace is a row in the `condominiums` table. All other tables re
 ## Tasks
 
 ### Database Migrations
-- [ ] Create migration: `condominiums` table
-  ```sql
-  id uuid primary key, name text, slug text unique, logo_url text,
-  address text, description text, created_at timestamptz
-  ```
-- [ ] Create migration: `condominium_members` table
-  ```sql
-  id uuid, condominium_id uuid fk, user_id uuid fk (auth.users),
-  system_role text check('admin','user'), functional_title_id uuid nullable fk,
-  joined_at timestamptz
-  ```
-- [ ] Create migration: `functional_titles` table
-  ```sql
-  id uuid, condominium_id uuid fk, name text, sort_order int
-  ```
-- [ ] Seed built-in functional titles: Administrator, Councilor, Auditor, Accountant
+- [x] Create migration: `condominiums` table (`20260228000000_base_schema.sql`)
+- [x] Create migration: `condominium_members` table (`20260228000000_base_schema.sql`)
+- [x] Create migration: `functional_titles` table (`20260228000000_base_schema.sql`)
+- [x] Seed built-in functional titles: Administrator, Councilor, Auditor, Accountant
 
 ### RLS Policies
-- [ ] `condominiums`: SELECT for members only (via join to `condominium_members`)
-- [ ] `condominium_members`: SELECT for members of same condominium; INSERT/UPDATE/DELETE for admin only
-- [ ] `functional_titles`: SELECT for members; INSERT/UPDATE/DELETE for admin only
-- [ ] Create Postgres function `get_my_condominium_id(slug text)` — helper used in RLS policies
-- [ ] Create Postgres function `is_admin(condominium_id uuid)` — checks if current user is admin for given condo
-- [ ] Create Postgres function `is_super_admin()` — checks platform-level role from auth metadata
+- [x] `condominiums`: SELECT for members only (via join to `condominium_members`)
+- [x] `condominium_members`: SELECT for members of same condominium; INSERT/UPDATE/DELETE for admin only
+- [x] `functional_titles`: SELECT for members; INSERT/UPDATE/DELETE for admin only
+- [x] Create Postgres function `get_my_condominium_id(slug text)` — helper used in RLS policies (`20260228000002_condominium_helpers.sql`)
+- [x] Create Postgres function `is_admin(condominium_id uuid)` — checks if current user is admin for given condo (`20260228000002_condominium_helpers.sql`)
+- [x] Create Postgres function `is_super_admin()` — checks platform-level role from auth metadata (`20260228000002_condominium_helpers.sql`)
 
 ### App Layout & Context
-- [ ] Create `app/app/[condominiumSlug]/layout.tsx`:
+- [x] Create `app/app/[condominiumSlug]/layout.tsx`:
   - Fetch condominium data by slug (server component)
   - 404 if not found or user is not a member
   - Pass condominium data via React context or layout props
-- [ ] Create `lib/context/condominium-context.tsx` — React context providing current condominium data to client components
-- [ ] Create `components/layout/navbar.tsx` — top navigation bar with:
+- [x] Create `lib/context/condominium-context.tsx` — React context providing current condominium data to client components
+- [x] Create `components/layout/navbar.tsx` — top navigation bar with:
   - Condominium name/logo
   - Navigation links (dashboard, budget, projects, etc.)
   - Notification bell placeholder (wired in F15)
   - User menu (profile, sign out)
-- [ ] Create `components/layout/sidebar.tsx` (optional) — side navigation alternative
 
 ### Utility Helpers
-- [ ] Create `lib/condominium/get-condominium.ts` — server-side fetch of condominium by slug
-- [ ] Create `lib/condominium/get-user-role.ts` — get current user's `system_role` for a condominium
+- [x] Create `lib/condominium/get-condominium.ts` — server-side fetch of condominium by slug
+- [x] Create `lib/condominium/get-user-role.ts` — get current user's `system_role` for a condominium
 
 ---
 
