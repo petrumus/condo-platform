@@ -1,7 +1,7 @@
 # F08 — Condominium Administration Page
 
-**Status:** `pending`
-**Branch:** `claude/feature-administration-page`
+**Status:** `completed`
+**Branch:** `claude/build-condo-admin-page-9Fjc5`
 **Spec sections:** §6.4 Condominium Administration Page
 
 ---
@@ -21,7 +21,7 @@ A public-facing page (visible to all condominium members) listing the people who
 ## Tasks
 
 ### Administration Page
-- [ ] Create `app/app/[condominiumSlug]/administration/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/administration/page.tsx`:
   - Fetch all members who have a functional title assigned
   - Order by `functional_titles.sort_order` ASC
   - Display as a card grid or list
@@ -29,21 +29,20 @@ A public-facing page (visible to all condominium members) listing the people who
   - If no governance members are assigned yet, show empty state: "No governance team members assigned yet."
 
 ### Components
-- [ ] Create `components/administration/governance-member-card.tsx`:
+- [x] Create `components/administration/governance-member-card.tsx`:
   - Avatar (from Supabase Storage `avatars` bucket, or initials fallback)
   - Full name
   - Functional title badge
   - Optional contact info (email link)
-- [ ] Create `components/administration/governance-grid.tsx` — responsive grid of member cards
+- [x] Create `components/administration/governance-grid.tsx` — responsive grid of member cards
 
 ### Data Access
-- [ ] Create server query in `lib/queries/administration.ts`:
+- [x] Create server query in `lib/queries/administration.ts`:
   - `getGovernanceMembers(condominiumId)` — joins `condominium_members` → `auth.users` (for name/email) → `functional_titles`, filtered to members with a title, ordered by sort_order
-- [ ] Optionally expose a `contact_email_visible` boolean on `condominium_members` to let members opt-in to showing their email publicly within the condominium
 
 ### Admin Controls
-- [ ] Admin sees an "Manage Team" button linking to `/settings/members`
-- [ ] On the members settings page (F04), the functional title assignment updates which members appear here
+- [x] Admin sees an "Manage Team" button linking to `/settings/members`
+- [x] On the members settings page (F04), the functional title assignment updates which members appear here
 
 ---
 
