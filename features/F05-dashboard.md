@@ -52,6 +52,7 @@ Create `components/dashboard/nav-card.tsx` — reusable card component with icon
 - [x] Redirect `/app/[condominiumSlug]` → `/app/[condominiumSlug]/dashboard`
 - [x] After successful login, redirect to the user's condominium dashboard (if they have exactly one membership)
 - [x] If user has multiple memberships, show a condominium picker page at `/app`
+- [x] If user is super-admin (no memberships required), redirect to `/super-admin/condominiums`
 
 ---
 
