@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
+import { createNotificationForAllMembers } from "@/lib/notifications/create-notification"
 
 export type BallotStatus = "draft" | "open" | "closed" | "results_published"
 export type QuestionType = "yes_no" | "single_choice" | "multi_choice"
@@ -134,8 +135,15 @@ export async function openBallot(
   condominiumSlug: string,
   ballotId: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
+
+  // Fetch ballot title before updating
+  const { data: ballot } = await supabase
+    .from("ballots")
+    .select("title, close_at")
+    .eq("id", ballotId)
+    .single()
 
   const { error } = await supabase
     .from("ballots")
@@ -144,6 +152,17 @@ export async function openBallot(
     .eq("status", "draft")
 
   if (error) throw new Error(error.message)
+
+  // Notify all condominium members
+  if (ballot) {
+    await createNotificationForAllMembers({
+      condominiumId: condominium.id,
+      type: "ballot_open",
+      title: "New ballot opened",
+      body: `"${ballot.title}" is now open for voting.`,
+      linkUrl: `/app/${condominiumSlug}/ballots/${ballotId}`,
+    })
+  }
 
   revalidatePath(`/app/${condominiumSlug}/ballots`)
   revalidatePath(`/app/${condominiumSlug}/ballots/${ballotId}`)
@@ -172,8 +191,15 @@ export async function publishResults(
   condominiumSlug: string,
   ballotId: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
+
+  // Fetch ballot title before updating
+  const { data: ballot } = await supabase
+    .from("ballots")
+    .select("title")
+    .eq("id", ballotId)
+    .single()
 
   const { error } = await supabase
     .from("ballots")
@@ -182,6 +208,17 @@ export async function publishResults(
     .eq("status", "closed")
 
   if (error) throw new Error(error.message)
+
+  // Notify all condominium members
+  if (ballot) {
+    await createNotificationForAllMembers({
+      condominiumId: condominium.id,
+      type: "ballot_results",
+      title: "Ballot results published",
+      body: `Results for "${ballot.title}" are now available.`,
+      linkUrl: `/app/${condominiumSlug}/ballots/${ballotId}/results`,
+    })
+  }
 
   revalidatePath(`/app/${condominiumSlug}/ballots`)
   revalidatePath(`/app/${condominiumSlug}/ballots/${ballotId}`)

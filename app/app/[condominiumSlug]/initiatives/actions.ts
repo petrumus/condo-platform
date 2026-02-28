@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
+import { createNotification } from "@/lib/notifications/create-notification"
 
 export type InitiativeStatus =
   | "draft"
@@ -85,8 +86,15 @@ export async function approveInitiative(
   condominiumSlug: string,
   initiativeId: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
+
+  // Fetch submitter_id and title before updating
+  const { data: initiative } = await supabase
+    .from("initiatives")
+    .select("submitter_id, title")
+    .eq("id", initiativeId)
+    .single()
 
   const { error } = await supabase
     .from("initiatives")
@@ -94,6 +102,18 @@ export async function approveInitiative(
     .eq("id", initiativeId)
 
   if (error) throw new Error(error.message)
+
+  // Notify submitter
+  if (initiative) {
+    await createNotification({
+      userId: initiative.submitter_id,
+      condominiumId: condominium.id,
+      type: "initiative_status",
+      title: "Initiative approved",
+      body: `Your initiative "${initiative.title}" has been approved.`,
+      linkUrl: `/app/${condominiumSlug}/initiatives/${initiativeId}`,
+    })
+  }
 
   revalidatePath(`/app/${condominiumSlug}/initiatives`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/${initiativeId}`)
@@ -105,8 +125,15 @@ export async function rejectInitiative(
   initiativeId: string,
   reason: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
+
+  // Fetch submitter_id and title before updating
+  const { data: initiative } = await supabase
+    .from("initiatives")
+    .select("submitter_id, title")
+    .eq("id", initiativeId)
+    .single()
 
   const { error } = await supabase
     .from("initiatives")
@@ -114,6 +141,20 @@ export async function rejectInitiative(
     .eq("id", initiativeId)
 
   if (error) throw new Error(error.message)
+
+  // Notify submitter
+  if (initiative) {
+    await createNotification({
+      userId: initiative.submitter_id,
+      condominiumId: condominium.id,
+      type: "initiative_status",
+      title: "Initiative not approved",
+      body: reason.trim()
+        ? `Your initiative "${initiative.title}" was not approved: ${reason.trim()}`
+        : `Your initiative "${initiative.title}" was not approved.`,
+      linkUrl: `/app/${condominiumSlug}/initiatives/${initiativeId}`,
+    })
+  }
 
   revalidatePath(`/app/${condominiumSlug}/initiatives`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/${initiativeId}`)

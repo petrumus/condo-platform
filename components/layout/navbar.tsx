@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Bell, ChevronDown, LogOut, Settings, User } from "lucide-react"
+import { ChevronDown, LogOut, Settings, User } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useCondominium } from "@/lib/context/condominium-context"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { NotificationBell } from "@/components/notifications/notification-bell"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 const NAV_LINKS = [
@@ -100,10 +101,12 @@ export function Navbar({ user }: NavbarProps) {
 
         {/* Right-side actions */}
         <div className="flex items-center gap-1 shrink-0">
-          {/* Notification bell — placeholder for F15 */}
-          <Button variant="ghost" size="icon" aria-label="Notifications" disabled>
-            <Bell className="h-4 w-4" />
-          </Button>
+          {/* Notification bell */}
+          <NotificationBell
+            userId={user.id}
+            condominiumId={condominium.id}
+            condominiumSlug={condominium.slug}
+          />
 
           {/* User menu */}
           <DropdownMenu>

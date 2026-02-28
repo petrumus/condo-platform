@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
+import { createNotification } from "@/lib/notifications/create-notification"
 
 export const MAINTENANCE_CATEGORIES = [
   "Plumbing",
@@ -158,6 +159,13 @@ export async function updateRequestStatus(
   const { condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
+  // Fetch submitter_id and title before updating
+  const { data: request } = await supabase
+    .from("maintenance_requests")
+    .select("submitter_id, title")
+    .eq("id", requestId)
+    .single()
+
   const updateData: Record<string, string> = { status: newStatus }
   if (adminNotes !== undefined) {
     updateData.admin_notes = adminNotes
@@ -170,6 +178,25 @@ export async function updateRequestStatus(
     .eq("condominium_id", condominium.id)
 
   if (error) throw new Error(error.message)
+
+  // Notify submitter
+  if (request) {
+    const statusLabels: Record<MaintenanceStatus, string> = {
+      open: "Open",
+      in_review: "In Review",
+      in_progress: "In Progress",
+      resolved: "Resolved",
+      closed: "Closed",
+    }
+    await createNotification({
+      userId: request.submitter_id,
+      condominiumId: condominium.id,
+      type: "maintenance_status",
+      title: "Maintenance request updated",
+      body: `Your request "${request.title}" status changed to ${statusLabels[newStatus]}.`,
+      linkUrl: `/app/${condominiumSlug}/maintenance/${requestId}`,
+    })
+  }
 
   revalidatePath(`/app/${condominiumSlug}/maintenance`)
   revalidatePath(`/app/${condominiumSlug}/maintenance/${requestId}`)
