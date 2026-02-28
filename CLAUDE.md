@@ -281,7 +281,7 @@ When a feature branch is complete:
 | F02 | Authentication | `completed` | `claude/build-authentication-I46RN` |
 | F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
 | F04 | User Roles & Members Management | `in_progress` | `claude/feature-user-roles-members` |
-| F05 | Dashboard / Home Page | `in_progress` | `claude/build-fifth-feature-F8aWs` |
+| F05 | Dashboard / Home Page | `completed` | `claude/build-fifth-feature-F8aWs` |
 | F06 | Yearly Budget Plan | `pending` | — |
 | F07 | Projects | `pending` | — |
 | F08 | Condominium Administration Page | `pending` | — |
