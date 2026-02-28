@@ -13,7 +13,7 @@ create table if not exists public.ballots (
   open_at               timestamptz not null,
   close_at              timestamptz not null,
   quorum_pct            numeric check (quorum_pct > 0 and quorum_pct <= 100),
-  linked_initiative_id  uuid,  -- soft ref to initiatives(id); no FK so migration is self-contained
+  linked_initiative_id  uuid references public.initiatives(id) on delete set null,
   status                text not null default 'draft'
                           check (status in ('draft', 'open', 'closed', 'results_published')),
   created_by            uuid not null references auth.users(id),
