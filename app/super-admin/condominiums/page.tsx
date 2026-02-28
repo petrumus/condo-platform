@@ -29,7 +29,9 @@ export default async function CondominiumsPage({ searchParams }: PageProps) {
   }
 
   const { data: rows, error } = await query
-  if (error) throw new Error(error.message)
+  if (error) {
+    throw new Error(`Failed to load condominiums: ${error.message}`)
+  }
 
   const condominiums: CondominiumRow[] = (rows ?? []).map((c) => {
     const members = (c.condominium_members as { id: string; system_role: string }[] | null) ?? []
