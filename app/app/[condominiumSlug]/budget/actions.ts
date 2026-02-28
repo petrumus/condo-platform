@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
+import { logAction } from "@/lib/audit/log-action"
 
 // ─── Auth helper ──────────────────────────────────────────────────────────────
 
@@ -92,7 +93,7 @@ export async function publishBudget(
   planId: string,
   year: number
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Verify at least one line item exists
@@ -111,6 +112,15 @@ export async function publishBudget(
     .eq("id", planId)
 
   if (error) throw new Error(error.message)
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "budget.published",
+    entityType: "budget_plan",
+    entityId: planId,
+    metadata: { year },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/budget/${year}`)
   revalidatePath(`/app/${condominiumSlug}/budget/${year}/edit`)

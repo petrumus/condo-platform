@@ -142,6 +142,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │   ├── actions.ts               ← Notification server actions: markRead, markAllRead (F15)
 │       │   └── page.tsx                 ← Full notifications list with type badges (F15)
 │       ├── settings/
+│       │   ├── audit-log/
+│       │   │   └── page.tsx             ← Admin audit log: filterable + paginated (F16)
 │       │   └── units/
 │       │       ├── actions.ts           ← Units server actions: CRUD + owner management + recalculate (F14)
 │       │       ├── page.tsx             ← Admin unit register: table, add/edit/delete, owners (F14)
@@ -158,6 +160,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── supabase/server.ts           ← Server Supabase client
 │   ├── supabase/middleware.ts        ← Middleware session update helper
 │   ├── types/database.ts            ← Generated Supabase DB types
+│   ├── audit/
+│   │   └── log-action.ts            ← logAction() helper using service role (F16)
 │   ├── notifications/
 │   │   └── create-notification.ts   ← createNotification + createNotificationForAllMembers (F15)
 │   ├── queries/
@@ -434,7 +438,7 @@ When a feature branch is complete:
 | F13 | Maintenance Requests | `completed` | `claude/build-maintenance-requests-VnTco` |
 | F14 | Units & Ownership | `completed` | `claude/build-units-ownership-feature-qUMFU` |
 | F15 | Notifications (In-App + Email) | `completed` | `claude/build-notifications-feature-NHD0B` |
-| F16 | Audit Log | `pending` | — |
+| F16 | Audit Log | `completed` | `claude/build-audit-log-feature-Q6L7e` |
 | F17 | Super Admin Panel | `completed` | `claude/build-super-admin-panel-INiZo` |
 | F18 | Settings Pages | `pending` | — |
 
@@ -470,3 +474,4 @@ When a feature branch is complete:
 | 2026-02-28 | F14 Units & Ownership completed on `claude/build-units-ownership-feature-qUMFU`: migration for units + unit_owners tables with RLS, admin unit register page (table with add/edit/delete/owners), unit-dialog and unit-owners-dialog modals (link registered members or unregistered owners), recalculate shares action, user My Unit page, DB types updated |
 | 2026-02-28 | F15 Notifications completed on `claude/build-notifications-feature-NHD0B`: migration for notifications table with RLS + realtime enabled, NotificationBell client component with realtime Supabase subscription + unread badge + dropdown + bell shake animation, full notifications page, useNotifications hook, createNotification/createNotificationForAllMembers helpers, notification triggers wired into announcements/ballots/initiatives/maintenance actions, Supabase Edge Function for n8n webhooks, docs/n8n-webhooks.md payload reference |
 | 2026-02-28 | **TODO (F15 follow-up):** n8n email notifications deferred. Edge function exists but not deployed. To activate: (1) `supabase functions deploy trigger-n8n-webhook`, (2) set `N8N_WEBHOOK_BASE_URL` + `N8N_WEBHOOK_SECRET` secrets, (3) add fire-and-forget fetch calls to relevant server actions. See `features/F15-notifications.md` n8n section for full details. |
+| 2026-02-28 | F16 Audit Log completed on `claude/build-audit-log-feature-Q6L7e`: `lib/audit/log-action.ts` helper (service-role, error-swallowing), logAction wired into 8 server action files (members, budget, projects, initiatives, ballots, documents, announcements, maintenance), admin-only audit-log page at `settings/audit-log` with filtering (action, actor, entity type, date range) + server-side pagination; no new migration needed (audit_logs table already in F17 migration) |

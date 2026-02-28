@@ -7,6 +7,7 @@ import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotification } from "@/lib/notifications/create-notification"
+import { logAction } from "@/lib/audit/log-action"
 
 export const MAINTENANCE_CATEGORIES = [
   "Plumbing",
@@ -156,13 +157,13 @@ export async function updateRequestStatus(
   newStatus: MaintenanceStatus,
   adminNotes?: string
 ): Promise<void> {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch submitter_id and title before updating
   const { data: request } = await supabase
     .from("maintenance_requests")
-    .select("submitter_id, title")
+    .select("submitter_id, title, status")
     .eq("id", requestId)
     .single()
 
@@ -197,6 +198,19 @@ export async function updateRequestStatus(
       linkUrl: `/app/${condominiumSlug}/maintenance/${requestId}`,
     })
   }
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "maintenance.status_changed",
+    entityType: "maintenance_request",
+    entityId: requestId,
+    metadata: {
+      from: request?.status ?? null,
+      to: newStatus,
+      title: request?.title ?? null,
+    },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/maintenance`)
   revalidatePath(`/app/${condominiumSlug}/maintenance/${requestId}`)

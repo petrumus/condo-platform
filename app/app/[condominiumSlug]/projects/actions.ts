@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
+import { logAction } from "@/lib/audit/log-action"
 
 export type ProjectStatus =
   | "proposed"
@@ -102,6 +103,15 @@ export async function createProject(
 
   if (error) throw new Error(error.message)
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "project.created",
+    entityType: "project",
+    entityId: project.id,
+    metadata: { title: data.title.trim(), status: data.status },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/projects`)
   return project
 }
@@ -142,7 +152,7 @@ export async function changeProjectStatus(
   currentStatus: ProjectStatus,
   newStatus: ProjectStatus
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
 
   const allowed = VALID_TRANSITIONS[currentStatus]
   if (!allowed.includes(newStatus)) {
@@ -159,6 +169,15 @@ export async function changeProjectStatus(
     .eq("id", projectId)
 
   if (error) throw new Error(error.message)
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "project.status_changed",
+    entityType: "project",
+    entityId: projectId,
+    metadata: { from: currentStatus, to: newStatus },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/projects`)
   revalidatePath(`/app/${condominiumSlug}/projects/${projectId}`)

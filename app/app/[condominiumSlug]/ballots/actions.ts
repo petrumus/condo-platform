@@ -7,6 +7,7 @@ import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotificationForAllMembers } from "@/lib/notifications/create-notification"
+import { logAction } from "@/lib/audit/log-action"
 
 export type BallotStatus = "draft" | "open" | "closed" | "results_published"
 export type QuestionType = "yes_no" | "single_choice" | "multi_choice"
@@ -83,6 +84,15 @@ export async function createBallot(
 
   if (error) throw new Error(error.message)
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "ballot.created",
+    entityType: "ballot",
+    entityId: ballot.id,
+    metadata: { title: data.title.trim(), question_type: data.question_type },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/ballots`)
   return ballot
 }
@@ -135,7 +145,7 @@ export async function openBallot(
   condominiumSlug: string,
   ballotId: string
 ): Promise<void> {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch ballot title before updating
@@ -164,6 +174,15 @@ export async function openBallot(
     })
   }
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "ballot.opened",
+    entityType: "ballot",
+    entityId: ballotId,
+    metadata: ballot ? { ballot_title: ballot.title } : null,
+  })
+
   revalidatePath(`/app/${condominiumSlug}/ballots`)
   revalidatePath(`/app/${condominiumSlug}/ballots/${ballotId}`)
 }
@@ -172,7 +191,7 @@ export async function closeBallot(
   condominiumSlug: string,
   ballotId: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -183,6 +202,14 @@ export async function closeBallot(
 
   if (error) throw new Error(error.message)
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "ballot.closed",
+    entityType: "ballot",
+    entityId: ballotId,
+  })
+
   revalidatePath(`/app/${condominiumSlug}/ballots`)
   revalidatePath(`/app/${condominiumSlug}/ballots/${ballotId}`)
 }
@@ -191,7 +218,7 @@ export async function publishResults(
   condominiumSlug: string,
   ballotId: string
 ): Promise<void> {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch ballot title before updating
@@ -219,6 +246,15 @@ export async function publishResults(
       linkUrl: `/app/${condominiumSlug}/ballots/${ballotId}/results`,
     })
   }
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "ballot.results_published",
+    entityType: "ballot",
+    entityId: ballotId,
+    metadata: ballot ? { ballot_title: ballot.title } : null,
+  })
 
   revalidatePath(`/app/${condominiumSlug}/ballots`)
   revalidatePath(`/app/${condominiumSlug}/ballots/${ballotId}`)
@@ -250,7 +286,7 @@ export async function castVote(
   ballotId: string,
   selectedOptions: string[]
 ): Promise<void> {
-  const { user } = await requireMember(condominiumSlug)
+  const { user, condominium } = await requireMember(condominiumSlug)
   const supabase = await createClient()
 
   // Verify ballot is open
@@ -285,6 +321,15 @@ export async function castVote(
     if (error.code === "23505") throw new Error("You have already voted on this ballot.")
     throw new Error(error.message)
   }
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "vote.cast",
+    entityType: "ballot",
+    entityId: ballotId,
+    metadata: { voter_id: user.id, ballot_id: ballotId },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/ballots`)
   revalidatePath(`/app/${condominiumSlug}/ballots/${ballotId}`)
