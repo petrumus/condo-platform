@@ -41,6 +41,9 @@ create policy "Admins can view their condominium audit logs"
   );
 
 -- ─── profiles: super-admin bypass ─────────────────────────────────────────────
+-- Drop first to avoid "already exists" error if applied more than once.
+
+drop policy if exists "Super-admins have full access to profiles" on public.profiles;
 
 create policy "Super-admins have full access to profiles"
   on public.profiles for all
