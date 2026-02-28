@@ -19,7 +19,7 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS v4 |
 | UI Components | shadcn/ui (to be installed) |
 | Backend / DB | Supabase (PostgreSQL + RLS) |
-| Auth | Supabase Auth — Email |
+| Auth | Supabase Auth — Google OAuth |
 | File Storage | Supabase Storage |
 | Realtime | Supabase Realtime |
 | Workflow Automation | n8n (email notifications, scheduled jobs) |
