@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { createServiceClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -16,7 +16,7 @@ interface PageProps {
 
 export default async function CondominiumDetailPage({ params }: PageProps) {
   const { id } = await params
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   const [
     { data: condoRaw },

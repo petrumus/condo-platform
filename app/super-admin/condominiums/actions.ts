@@ -2,13 +2,13 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createServiceClient } from "@/lib/supabase/server"
 
 async function requireSuperAdmin() {
-  const supabase = await createClient()
+  const authClient = await createClient()
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await authClient.auth.getUser()
 
   if (!user) redirect("/")
 
@@ -18,6 +18,7 @@ async function requireSuperAdmin() {
 
   if (!isSuperAdmin) redirect("/")
 
+  const supabase = await createServiceClient()
   return { user, supabase }
 }
 
