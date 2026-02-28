@@ -240,6 +240,7 @@ Open the SQL editor in your Supabase project dashboard and paste + run each migr
 - When changing the auth method, update: `CLAUDE.md` Tech Stack table, `features/F02-authentication.md`, and the Session Log.
 - When adding/removing pages or lib files, update the Repo Map in `CLAUDE.md`.
 - When adding migrations, list them in the relevant feature file under a "Database Migrations" section.
+- **Feature status must always be identical in both places.** When marking a feature complete, update `Status:` in `features/F<NN>-*.md` AND the Features Progress table in this file in the same commit. Never let them diverge.
 
 ---
 
@@ -247,7 +248,7 @@ Open the SQL editor in your Supabase project dashboard and paste + run each migr
 
 1. When starting a new feature, create branch: `git checkout -b claude/feature-<slug>`
 2. Read the relevant feature file in `features/` for task list and context pointers
-3. Update status in this CLAUDE.md (below) when started and completed
+3. Update status in **both** `features/F<NN>-*.md` (the `Status:` field at the top) **and** the Features Progress table in this file — always in the same commit
 4. Run `npx next build` before pushing — never push a broken build
 5. Push feature branch when all tasks are done
 
@@ -280,7 +281,7 @@ When a feature branch is complete:
 | F01 | Project Foundation & Setup | `completed` | `claude/build-pending-feature-2x0EO` |
 | F02 | Authentication | `completed` | `claude/build-authentication-I46RN` |
 | F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
-| F04 | User Roles & Members Management | `in_progress` | `claude/feature-user-roles-members` |
+| F04 | User Roles & Members Management | `completed` | `claude/feature-user-roles-members` |
 | F05 | Dashboard / Home Page | `completed` | `claude/build-fifth-feature-F8aWs` |
 | F06 | Yearly Budget Plan | `pending` | — |
 | F07 | Projects | `pending` | — |
