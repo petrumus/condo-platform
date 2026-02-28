@@ -228,3 +228,4 @@ When a feature branch is complete:
 |---|---|
 | 2026-02-28 | Initial CLAUDE.md created; all feature files scaffolded |
 | 2026-02-28 | Reorganized repo: spec moved to `docs/`; merge-to-main workflow added |
+| 2026-02-28 | `claude/setup-project-structure-xDH6H` merged into `main` via PR (manually by user) |
