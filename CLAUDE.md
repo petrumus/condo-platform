@@ -212,12 +212,37 @@ Open the SQL editor in your Supabase project dashboard and paste + run each migr
 
 ---
 
+## Safety Rules (MUST follow)
+
+### Before every push
+1. **Run `npx next build`** — the branch must compile cleanly. Never push code that fails the build.
+2. **Check for conflict markers** — run `grep -rn "<<<<<<" --include="*.ts" --include="*.tsx" --include="*.md"` before committing after any merge/rebase. Leftover `<<<<<<<` / `>>>>>>>` markers break builds and corrupt files.
+3. **Verify no files were accidentally deleted** — after resolving merge conflicts, run `git diff --stat HEAD origin/main` and review any deleted files. If a file exists on `main` and your branch deletes it, confirm the deletion is intentional.
+
+### When resolving merge conflicts
+- **Never auto-accept "ours" or "theirs" for an entire file.** Review each conflict block individually.
+- After resolving, run `npx next build` to catch duplicate exports, missing imports, or broken references.
+- Pay special attention to `app/` pages — accidentally dropping a page file creates 404s for users.
+
+### Do NOT rename or delete framework files without verifying
+- **`middleware.ts`** — Next.js 16 shows a deprecation warning suggesting `proxy.ts`. Both conventions work, but do NOT rename unless the team explicitly decides to migrate. If you do rename, update `lib/supabase/middleware.ts` references and all docs.
+- Do not remove packages (`package.json` dependencies) that are used in the codebase. Search for imports before removing.
+- Do not revert completed feature statuses in `CLAUDE.md` or feature files — check the Features Progress table first.
+
+### Keep docs in sync
+- When changing the auth method, update: `CLAUDE.md` Tech Stack table, `features/F02-authentication.md`, and the Session Log.
+- When adding/removing pages or lib files, update the Repo Map in `CLAUDE.md`.
+- When adding migrations, list them in the relevant feature file under a "Database Migrations" section.
+
+---
+
 ## Feature Branch Workflow
 
 1. When starting a new feature, create branch: `git checkout -b claude/feature-<slug>`
 2. Read the relevant feature file in `features/` for task list and context pointers
 3. Update status in this CLAUDE.md (below) when started and completed
-4. Push feature branch when all tasks are done
+4. Run `npx next build` before pushing — never push a broken build
+5. Push feature branch when all tasks are done
 
 ---
 
@@ -235,8 +260,9 @@ When a feature branch is complete:
    git merge claude/feature-<name> --no-ff -m "Merge feature: <name>"
    git push origin main
    ```
-4. Update the Features Progress table in this file: set status to `completed`, clear branch
-5. Log the merge in the Session Log below
+4. **After merge, verify:** run `npx next build` on `main` to catch any merge issues
+5. Update the Features Progress table in this file: set status to `completed`, clear branch
+6. Log the merge in the Session Log below
 
 ---
 
