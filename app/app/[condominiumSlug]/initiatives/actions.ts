@@ -7,6 +7,7 @@ import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotification } from "@/lib/notifications/create-notification"
+import { logAction } from "@/lib/audit/log-action"
 
 export type InitiativeStatus =
   | "draft"
@@ -86,7 +87,7 @@ export async function approveInitiative(
   condominiumSlug: string,
   initiativeId: string
 ): Promise<void> {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch submitter_id and title before updating
@@ -115,6 +116,15 @@ export async function approveInitiative(
     })
   }
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "initiative.approved",
+    entityType: "initiative",
+    entityId: initiativeId,
+    metadata: initiative ? { title: initiative.title } : null,
+  })
+
   revalidatePath(`/app/${condominiumSlug}/initiatives`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/${initiativeId}`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/review`)
@@ -125,7 +135,7 @@ export async function rejectInitiative(
   initiativeId: string,
   reason: string
 ): Promise<void> {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch submitter_id and title before updating
@@ -156,6 +166,15 @@ export async function rejectInitiative(
     })
   }
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "initiative.rejected",
+    entityType: "initiative",
+    entityId: initiativeId,
+    metadata: { title: initiative?.title ?? null, reason: reason.trim() || null },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/initiatives`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/${initiativeId}`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/review`)
@@ -165,7 +184,7 @@ export async function convertToProject(
   condominiumSlug: string,
   initiativeId: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch initiative data for pre-filling
@@ -185,6 +204,15 @@ export async function convertToProject(
 
   if (error) throw new Error(error.message)
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "initiative.converted",
+    entityType: "initiative",
+    entityId: initiativeId,
+    metadata: { title: initiative.title, converted_to: "project" },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/initiatives`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/${initiativeId}`)
 
@@ -202,7 +230,7 @@ export async function convertToBallot(
   condominiumSlug: string,
   initiativeId: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch initiative data for pre-filling
@@ -221,6 +249,15 @@ export async function convertToBallot(
     .eq("id", initiativeId)
 
   if (error) throw new Error(error.message)
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "initiative.converted",
+    entityType: "initiative",
+    entityId: initiativeId,
+    metadata: { title: initiative.title, converted_to: "ballot" },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/initiatives`)
   revalidatePath(`/app/${condominiumSlug}/initiatives/${initiativeId}`)

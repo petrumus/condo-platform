@@ -6,6 +6,7 @@ import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import type { MemberRole } from "@/lib/types"
+import { logAction } from "@/lib/audit/log-action"
 
 // ─── Guard helper ─────────────────────────────────────────────────────────────
 
@@ -29,7 +30,7 @@ export async function updateMemberRole(
   memberId: string,
   newRole: MemberRole
 ) {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -40,6 +41,15 @@ export async function updateMemberRole(
 
   if (error) throw new Error(error.message)
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "member.role_changed",
+    entityType: "condominium_member",
+    entityId: memberId,
+    metadata: { new_role: newRole },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/settings/members`)
 }
 
@@ -48,7 +58,7 @@ export async function updateMemberTitle(
   memberId: string,
   titleId: string | null
 ) {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -58,6 +68,15 @@ export async function updateMemberTitle(
     .eq("condominium_id", condominium.id)
 
   if (error) throw new Error(error.message)
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "member.title_assigned",
+    entityType: "condominium_member",
+    entityId: memberId,
+    metadata: { title_id: titleId },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/settings/members`)
 }
@@ -86,6 +105,15 @@ export async function removeMember(condominiumSlug: string, memberId: string) {
 
   if (error) throw new Error(error.message)
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "member.removed",
+    entityType: "condominium_member",
+    entityId: memberId,
+    metadata: { removed_user_id: target?.user_id ?? null },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/settings/members`)
 }
 
@@ -112,14 +140,27 @@ export async function inviteMember(
     throw new Error("An invitation for this email is already pending")
   }
 
-  const { error } = await supabase.from("invitations").insert({
-    condominium_id: condominium.id,
-    email: email.toLowerCase(),
-    role,
-    created_by: user.id,
-  })
+  const { data: invitation, error } = await supabase
+    .from("invitations")
+    .insert({
+      condominium_id: condominium.id,
+      email: email.toLowerCase(),
+      role,
+      created_by: user.id,
+    })
+    .select("id")
+    .single()
 
   if (error) throw new Error(error.message)
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "member.invited",
+    entityType: "invitation",
+    entityId: invitation?.id ?? null,
+    metadata: { email: email.toLowerCase(), role },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/settings/members`)
 }
@@ -128,7 +169,7 @@ export async function revokeInvitation(
   condominiumSlug: string,
   invitationId: string
 ) {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -138,6 +179,14 @@ export async function revokeInvitation(
     .eq("condominium_id", condominium.id)
 
   if (error) throw new Error(error.message)
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "member.invitation_revoked",
+    entityType: "invitation",
+    entityId: invitationId,
+  })
 
   revalidatePath(`/app/${condominiumSlug}/settings/members`)
 }

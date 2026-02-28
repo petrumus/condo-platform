@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
+import { logAction } from "@/lib/audit/log-action"
 
 export type Visibility = "public" | "members" | "admin-only"
 
@@ -164,7 +165,7 @@ export async function uploadDocument(
 
   if (uploadError) throw new Error(uploadError.message)
 
-  const { error: dbError } = await supabase.from("documents").insert({
+  const { data: doc, error: dbError } = await supabase.from("documents").insert({
     condominium_id: condominium.id,
     folder_id: folderId,
     name: displayName,
@@ -173,13 +174,22 @@ export async function uploadDocument(
     mime_type: file.type,
     visibility_override: visibilityOverride || null,
     uploaded_by: user.id,
-  })
+  }).select("id").single()
 
   if (dbError) {
     // Try to clean up the uploaded file
     await supabase.storage.from("documents").remove([storagePath])
     throw new Error(dbError.message)
   }
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "document.uploaded",
+    entityType: "document",
+    entityId: doc?.id ?? null,
+    metadata: { name: displayName, folder_id: folderId, visibility_override: visibilityOverride },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/documents`)
   if (folderId) {
@@ -193,7 +203,7 @@ export async function updateDocument(
   name: string,
   visibilityOverride: Visibility | null
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   const { data: doc } = await supabase
@@ -209,6 +219,15 @@ export async function updateDocument(
 
   if (error) throw new Error(error.message)
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "document.permissions_changed",
+    entityType: "document",
+    entityId: documentId,
+    metadata: { name: name.trim(), visibility_override: visibilityOverride },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/documents`)
   if (doc?.folder_id) {
     revalidatePath(`/app/${condominiumSlug}/documents/${doc.folder_id}`)
@@ -219,13 +238,13 @@ export async function deleteDocument(
   condominiumSlug: string,
   documentId: string
 ): Promise<void> {
-  await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch the storage path first
   const { data: doc } = await supabase
     .from("documents")
-    .select("storage_path, folder_id")
+    .select("storage_path, folder_id, name")
     .eq("id", documentId)
     .single()
 
@@ -241,6 +260,15 @@ export async function deleteDocument(
   // Delete from DB
   const { error } = await supabase.from("documents").delete().eq("id", documentId)
   if (error) throw new Error(error.message)
+
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "document.deleted",
+    entityType: "document",
+    entityId: documentId,
+    metadata: { name: doc.name, folder_id: doc.folder_id },
+  })
 
   revalidatePath(`/app/${condominiumSlug}/documents`)
   if (doc.folder_id) {

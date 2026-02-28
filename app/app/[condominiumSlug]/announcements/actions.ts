@@ -7,6 +7,7 @@ import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotificationForAllMembers } from "@/lib/notifications/create-notification"
+import { logAction } from "@/lib/audit/log-action"
 
 const ALLOWED_MIME_TYPES = [
   "application/pdf",
@@ -138,6 +139,15 @@ export async function publishAnnouncement(
     linkUrl: `/app/${condominiumSlug}/announcements/${announcement.id}`,
   })
 
+  await logAction({
+    condominiumId: condominium.id,
+    actorId: user.id,
+    action: "announcement.published",
+    entityType: "announcement",
+    entityId: announcement.id,
+    metadata: { title, pinned },
+  })
+
   revalidatePath(`/app/${condominiumSlug}/announcements`)
   revalidatePath(`/app/${condominiumSlug}/dashboard`)
 
@@ -181,7 +191,7 @@ export async function deleteAnnouncement(
   condominiumSlug: string,
   announcementId: string
 ): Promise<void> {
-  const { condominium } = await requireAdmin(condominiumSlug)
+  const { user, condominium } = await requireAdmin(condominiumSlug)
   const supabase = await createClient()
 
   // Fetch all attachment storage paths before deleting
