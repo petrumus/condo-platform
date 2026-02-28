@@ -61,6 +61,14 @@ export async function updateSession(request: NextRequest) {
 
   // ── Post-login redirect for authenticated users hitting "/" ──────────────
   if (pathname === "/" && user) {
+    const isSuperAdmin =
+      user.app_metadata?.role === "super-admin" ||
+      user.app_metadata?.is_super_admin === true
+
+    if (isSuperAdmin) {
+      return redirectTo("/super-admin/condominiums")
+    }
+
     const { data: memberships } = await supabase
       .from("condominium_members")
       .select("*, condominiums ( slug )")
