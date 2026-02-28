@@ -28,14 +28,15 @@ export async function signInWithMagicLink(formData: FormData) {
   redirect(`/auth/confirm?email=${encodeURIComponent(email)}`)
 }
 
-export async function signInWithGoogle() {
+export async function signInWithGoogle(formData: FormData) {
+  const next = (formData.get("next") as string) || "/"
   const supabase = await createClient()
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   })
 

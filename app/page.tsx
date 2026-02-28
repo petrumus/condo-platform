@@ -1,14 +1,12 @@
 import { redirect } from "next/navigation"
-import { signInWithMagicLink, signInWithGoogle } from "@/app/auth/actions"
+import { signInWithGoogle } from "@/app/auth/actions"
 import { getUser } from "@/lib/auth/get-user"
 import { getUserMemberships } from "@/lib/auth/get-membership"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Building2 } from "lucide-react"
+import { Logo } from "@/components/logo"
 
 interface HomePageProps {
-  searchParams: Promise<{ error?: string; email?: string }>
+  searchParams: Promise<{ error?: string; next?: string }>
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
@@ -25,16 +23,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     redirect("/pending")
   }
 
-  const { error, email } = await searchParams
+  const { error, next } = await searchParams
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Building2 className="h-6 w-6" />
-          </div>
+          <Logo className="h-14 w-14" />
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
               Condo Platform
@@ -47,42 +43,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {/* Sign-in card */}
         <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <form action={signInWithMagicLink} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                defaultValue={email ? decodeURIComponent(email) : undefined}
-                required
-                autoComplete="email"
-                autoFocus
-              />
-            </div>
-
-            {error && (
-              <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {decodeURIComponent(error)}
-              </p>
-            )}
-
-            <Button type="submit" className="w-full">
-              Send magic link
-            </Button>
-          </form>
-
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">or</span>
-            </div>
-          </div>
+          {error && (
+            <p className="mb-4 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {decodeURIComponent(error)}
+            </p>
+          )}
 
           <form action={signInWithGoogle}>
+            {next && <input type="hidden" name="next" value={next} />}
             <Button type="submit" variant="outline" className="w-full gap-2">
               <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
                 <path
@@ -94,7 +62,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   fill="#34A853"
                 />
                 <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
                   fill="#FBBC05"
                 />
                 <path
@@ -102,12 +70,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   fill="#EA4335"
                 />
               </svg>
-              Continue with Google
+              Sign in with Google
             </Button>
           </form>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            We&apos;ll send a sign-in link to your email — no password needed.
+            You&apos;ll be redirected to Google to complete sign in.
           </p>
         </div>
 
@@ -116,6 +84,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <span className="font-medium text-foreground">
             Contact your condominium administrator.
           </span>
+        </p>
+
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          <a href="/privacy" className="underline hover:text-foreground">
+            Privacy Policy
+          </a>
+          {" · "}
+          <a href="/terms" className="underline hover:text-foreground">
+            Terms of Service
+          </a>
         </p>
       </div>
     </div>
