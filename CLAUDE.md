@@ -49,7 +49,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000004_budget.sql        ← budget_plans + budget_line_items (F06)
 │   ├── 20260228000005_super_admin.sql   ← condominiums.status + audit_logs + profiles RLS (F17)
 │   ├── 20260228000006_projects.sql      ← projects + project_updates tables with RLS (F07)
-│   └── 20260228000007_initiatives.sql   ← initiatives + initiative_attachments tables with RLS (F09)
+│   ├── 20260228000007_initiatives.sql   ← initiatives + initiative_attachments tables with RLS (F09)
+│   └── 20260228000008_ballots.sql       ← ballots + votes tables + has_voted() function (F10)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -84,6 +85,14 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │   ├── new/page.tsx             ← Submit initiative form (F09)
 │       │   ├── review/page.tsx          ← Admin review queue (F09)
 │       │   └── [id]/page.tsx            ← Initiative detail + admin controls (F09)
+│       ├── ballots/
+│       │   ├── actions.ts               ← Ballots server actions (F10)
+│       │   ├── page.tsx                 ← Ballots list with status tabs (F10)
+│       │   ├── new/page.tsx             ← Create ballot, admin only (F10)
+│       │   └── [id]/
+│       │       ├── page.tsx             ← Ballot detail + voting interface (F10)
+│       │       ├── edit/page.tsx        ← Edit draft ballot, admin only (F10)
+│       │       └── results/page.tsx     ← Results with tally + CSV export (F10)
 │   ├── invite/[token]/
 │   │   ├── page.tsx                 ← Invitation acceptance page
 │   │   └── actions.ts               ← Accept invitation server action
@@ -136,6 +145,13 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── initiative-card.tsx          ← Initiative list card (F09)
 │   │   ├── initiative-form.tsx          ← Submit initiative form (F09)
 │   │   └── admin-initiative-actions.tsx ← Admin approve/reject/convert controls (F09)
+│   ├── ballots/
+│   │   ├── ballot-status-badge.tsx      ← Colored status badge (F10)
+│   │   ├── ballot-card.tsx              ← Ballot list card with voting indicator (F10)
+│   │   ├── ballot-form.tsx              ← Create/edit ballot form (F10)
+│   │   ├── vote-form.tsx                ← Voting interface (yes/no, single, multi) (F10)
+│   │   ├── ballot-admin-actions.tsx     ← Admin lifecycle controls (F10)
+│   │   └── export-csv-button.tsx        ← Results CSV export button (F10)
 │   ├── projects/
 │   │   ├── status-badge.tsx         ← Colored badge for each project status (F07)
 │   │   ├── project-card.tsx         ← Project list card (F07)
@@ -348,7 +364,7 @@ When a feature branch is complete:
 | F07 | Projects | `completed` | `claude/build-projects-feature-Gbgrv` |
 | F08 | Condominium Administration Page | `completed` | `claude/build-condo-admin-page-9Fjc5` |
 | F09 | Initiatives | `completed` | `claude/build-initiatives-feature-780sD` |
-| F10 | Ballots & Voting | `pending` | — |
+| F10 | Ballots & Voting | `completed` | `claude/build-ballots-voting-5PEV8` |
 | F11 | Document Repository | `pending` | — |
 | F12 | Announcements | `pending` | — |
 | F13 | Maintenance Requests | `pending` | — |
@@ -383,3 +399,4 @@ When a feature branch is complete:
 | 2026-02-28 | F07 Projects completed on `claude/build-projects-feature-Gbgrv`: migration for projects + project_updates with RLS, projects list with status tabs, project detail with progress updates timeline, create/edit forms (admin), lifecycle status advancement, 6 new components |
 | 2026-02-28 | F08 Condominium Administration Page completed on `claude/build-condo-admin-page-9Fjc5`: governance team page, 2 components (GovernanceMemberCard, GovernanceGrid), getGovernanceMembers query, admin "Manage Team" button, empty state |
 | 2026-02-28 | F09 Initiatives completed on `claude/build-initiatives-feature-780sD`: migration for initiatives + initiative_attachments with RLS, initiatives list with status tabs, submit form, detail page with admin controls (approve/reject modal/convert), admin review queue, 4 new components, DB types updated |
+| 2026-02-28 | F10 Ballots & Voting completed on `claude/build-ballots-voting-5PEV8`: migration for ballots + votes tables with RLS + has_voted() function, ballots list with Open/Upcoming/Closed/Draft tabs, ballot detail with voting interface (yes/no, single, multi-choice), admin tally, lifecycle controls (Draft→Open→Closed→Results Published), results page with quorum assessment, CSV export, 6 new components |

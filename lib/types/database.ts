@@ -444,13 +444,13 @@ export type Database = {
           condominium_id: string
           title: string
           description: string | null
-          question_type: "single" | "multiple" | "yes_no"
+          question_type: "yes_no" | "single_choice" | "multi_choice"
           options: Json
           open_at: string
           close_at: string
           quorum_pct: number | null
           linked_initiative_id: string | null
-          status: "draft" | "open" | "closed"
+          status: "draft" | "open" | "closed" | "results_published"
           created_by: string
           created_at: string
         }
@@ -459,13 +459,13 @@ export type Database = {
           condominium_id: string
           title: string
           description?: string | null
-          question_type?: "single" | "multiple" | "yes_no"
+          question_type?: "yes_no" | "single_choice" | "multi_choice"
           options?: Json
           open_at: string
           close_at: string
           quorum_pct?: number | null
           linked_initiative_id?: string | null
-          status?: "draft" | "open" | "closed"
+          status?: "draft" | "open" | "closed" | "results_published"
           created_by: string
           created_at?: string
         }
@@ -474,13 +474,13 @@ export type Database = {
           condominium_id?: string
           title?: string
           description?: string | null
-          question_type?: "single" | "multiple" | "yes_no"
+          question_type?: "yes_no" | "single_choice" | "multi_choice"
           options?: Json
           open_at?: string
           close_at?: string
           quorum_pct?: number | null
           linked_initiative_id?: string | null
-          status?: "draft" | "open" | "closed"
+          status?: "draft" | "open" | "closed" | "results_published"
           created_by?: string
           created_at?: string
         }
