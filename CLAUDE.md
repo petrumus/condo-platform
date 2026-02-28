@@ -280,7 +280,7 @@ When a feature branch is complete:
 | F01 | Project Foundation & Setup | `completed` | `claude/build-pending-feature-2x0EO` |
 | F02 | Authentication | `completed` | `claude/build-authentication-I46RN` |
 | F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
-| F04 | User Roles & Members Management | `in_progress` | `claude/feature-user-roles-members` |
+| F04 | User Roles & Members Management | `completed` | `claude/feature-user-roles-members` |
 | F05 | Dashboard / Home Page | `completed` | `claude/build-fifth-feature-F8aWs` |
 | F06 | Yearly Budget Plan | `pending` | — |
 | F07 | Projects | `pending` | — |
