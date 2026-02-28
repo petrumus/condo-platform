@@ -201,7 +201,7 @@ When a feature branch is complete:
 
 | ID | Feature | Status | Branch |
 |---|---|---|---|
-| F01 | Project Foundation & Setup | `pending` | — |
+| F01 | Project Foundation & Setup | `completed` | `claude/build-pending-feature-2x0EO` |
 | F02 | Authentication | `pending` | — |
 | F03 | Multi-tenancy & Condominium Workspace | `pending` | — |
 | F04 | User Roles & Members Management | `pending` | — |
@@ -229,3 +229,4 @@ When a feature branch is complete:
 | 2026-02-28 | Initial CLAUDE.md created; all feature files scaffolded |
 | 2026-02-28 | Reorganized repo: spec moved to `docs/`; merge-to-main workflow added |
 | 2026-02-28 | `claude/setup-project-structure-xDH6H` merged into `main` via PR (manually by user) |
+| 2026-02-28 | F01 Project Foundation completed on `claude/build-pending-feature-2x0EO`: Supabase clients, shadcn/ui components, middleware, TypeScript DB types, shell layouts |
