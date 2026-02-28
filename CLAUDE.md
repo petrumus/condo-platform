@@ -203,7 +203,7 @@ When a feature branch is complete:
 |---|---|---|---|
 | F01 | Project Foundation & Setup | `completed` | `claude/build-pending-feature-2x0EO` |
 | F02 | Authentication | `in-progress` | `claude/build-authentication-I46RN` |
-| F03 | Multi-tenancy & Condominium Workspace | `pending` | — |
+| F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
 | F04 | User Roles & Members Management | `pending` | — |
 | F05 | Dashboard / Home Page | `pending` | — |
 | F06 | Yearly Budget Plan | `pending` | — |
@@ -231,3 +231,4 @@ When a feature branch is complete:
 | 2026-02-28 | `claude/setup-project-structure-xDH6H` merged into `main` via PR (manually by user) |
 | 2026-02-28 | F01 Project Foundation completed on `claude/build-pending-feature-2x0EO`: Supabase clients, shadcn/ui components, middleware, TypeScript DB types, shell layouts |
 | 2026-02-28 | F02 Authentication started on `claude/build-authentication-I46RN`: magic link login page, auth callback, confirm page, pending page, invite acceptance flow, middleware redirect logic, invitations DB migration |
+| 2026-02-28 | F03 Multi-tenancy & Condominium Workspace completed on `claude/build-multitenancy-condominium-sVQC8`: condominium slug routing, tenant layout, RLS migrations, helper functions (`is_super_admin`, `is_admin`, `get_my_condominium_id`), functional titles seed trigger |
