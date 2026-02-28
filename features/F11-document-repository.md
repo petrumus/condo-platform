@@ -13,7 +13,7 @@ Hierarchical folder structure for storing and sharing files. Backed by Supabase 
 **Key files to read before starting:**
 - `CLAUDE.md` — schema for `documents`, `document_folders`; storage buckets list
 - `features/F03-multitenancy-condominium.md` — RLS setup
-- `condominium-platform-spec.md` §6.7, §9
+- `docs/condominium-platform-spec.md` §6.7, §9
 
 ---
 

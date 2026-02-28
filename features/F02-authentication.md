@@ -13,7 +13,7 @@ Authentication is handled entirely by Supabase Auth using Email (magic link or p
 **Key files to read before starting:**
 - `CLAUDE.md` — repo map and conventions
 - `features/F01-project-foundation.md` — must be completed first (Supabase client setup)
-- `condominium-platform-spec.md` §5 — auth details
+- `docs/condominium-platform-spec.md` §5 — auth details
 
 ---
 

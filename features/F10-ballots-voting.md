@@ -16,7 +16,7 @@ Admins create digital ballot papers for resident voting. Supports Yes/No, single
 - `CLAUDE.md` — schema for `ballots`, `votes`
 - `features/F03-multitenancy-condominium.md` — RLS
 - `features/F09-initiatives.md` — linking ballots to initiatives
-- `condominium-platform-spec.md` §6.6
+- `docs/condominium-platform-spec.md` §6.6
 
 ---
 

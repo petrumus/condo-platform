@@ -15,7 +15,7 @@ Super-admins have platform-wide access. They manage condominium workspaces (crea
 - `features/F02-authentication.md` — super-admin role in auth metadata
 - `features/F03-multitenancy-condominium.md` — condominiums table, is_super_admin()
 - `features/F16-audit-log.md` — platform-wide audit log view
-- `condominium-platform-spec.md` §3.1, §13
+- `docs/condominium-platform-spec.md` §3.1, §13
 
 ---
 

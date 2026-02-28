@@ -16,7 +16,7 @@ Settings pages are under `/app/[condominiumSlug]/settings/`. Most are admin-only
 - `features/F04-user-roles-members.md` — members settings (already scoped there)
 - `features/F14-units-ownership.md` — units settings (already scoped there)
 - `features/F15-notifications.md` — notification preferences (already scoped there)
-- `condominium-platform-spec.md` §13
+- `docs/condominium-platform-spec.md` §13
 
 ---
 

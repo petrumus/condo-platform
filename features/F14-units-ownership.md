@@ -14,7 +14,7 @@ Each condominium maintains a register of units (apartments). Each unit has an ar
 - `CLAUDE.md` — schema for `units`, `unit_owners`
 - `features/F03-multitenancy-condominium.md` — RLS
 - `features/F04-user-roles-members.md` — member management context
-- `condominium-platform-spec.md` §6.10
+- `docs/condominium-platform-spec.md` §6.10
 
 ---
 

@@ -13,7 +13,7 @@ One published budget per year per condominium. Structured as line items (categor
 **Key files to read before starting:**
 - `CLAUDE.md` — schema for `budget_plans`, `budget_line_items`
 - `features/F03-multitenancy-condominium.md` — RLS setup
-- `condominium-platform-spec.md` §6.2
+- `docs/condominium-platform-spec.md` §6.2
 
 ---
 

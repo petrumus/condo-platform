@@ -14,7 +14,7 @@ Admins publish announcements to all condominium members. Announcements support r
 - `CLAUDE.md` — schema for `announcements`; storage bucket `announcement-attachments`
 - `features/F03-multitenancy-condominium.md` — RLS
 - `features/F15-notifications.md` — notification trigger on publish
-- `condominium-platform-spec.md` §6.8
+- `docs/condominium-platform-spec.md` §6.8
 
 ---
 

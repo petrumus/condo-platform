@@ -14,7 +14,7 @@ Every tenant workspace is a row in the `condominiums` table. All other tables re
 - `CLAUDE.md` — full database schema
 - `features/F01-project-foundation.md` — Supabase client setup
 - `features/F02-authentication.md` — auth and membership helpers
-- `condominium-platform-spec.md` §4, §7, §9
+- `docs/condominium-platform-spec.md` §4, §7, §9
 
 ---
 

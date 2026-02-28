@@ -16,7 +16,7 @@ Residents submit maintenance or repair requests. Admins view all requests, updat
 - `CLAUDE.md` — schema for `maintenance_requests`; storage bucket `maintenance-attachments`
 - `features/F03-multitenancy-condominium.md` — RLS
 - `features/F15-notifications.md` — notification on status change
-- `condominium-platform-spec.md` §6.9
+- `docs/condominium-platform-spec.md` §6.9
 
 ---
 

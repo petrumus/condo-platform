@@ -17,7 +17,7 @@ Any authenticated condominium member can submit an initiative (idea or request).
 - `features/F03-multitenancy-condominium.md` — RLS
 - `features/F07-projects.md` — conversion to project
 - `features/F10-ballots-voting.md` — conversion to ballot
-- `condominium-platform-spec.md` §6.5
+- `docs/condominium-platform-spec.md` §6.5
 
 ---
 

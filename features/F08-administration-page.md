@@ -14,7 +14,7 @@ A public-facing page (visible to all condominium members) listing the people who
 - `CLAUDE.md` — schema for `condominium_members`, `functional_titles`
 - `features/F03-multitenancy-condominium.md` — RLS and condominium context
 - `features/F04-user-roles-members.md` — functional titles management
-- `condominium-platform-spec.md` §6.4
+- `docs/condominium-platform-spec.md` §6.4
 
 ---
 

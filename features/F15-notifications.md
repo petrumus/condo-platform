@@ -13,7 +13,7 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
 **Key files to read before starting:**
 - `CLAUDE.md` — schema for `notifications`; n8n workflows table
 - `features/F03-multitenancy-condominium.md` — RLS and condominium context
-- `condominium-platform-spec.md` §10, §12
+- `docs/condominium-platform-spec.md` §10, §12
 
 ---
 

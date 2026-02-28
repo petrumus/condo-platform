@@ -15,7 +15,7 @@ Projects track physical or administrative initiatives that are formally approved
 **Key files to read before starting:**
 - `CLAUDE.md` — schema for `projects`, `project_updates`
 - `features/F03-multitenancy-condominium.md` — RLS setup
-- `condominium-platform-spec.md` §6.3
+- `docs/condominium-platform-spec.md` §6.3
 
 ---
 

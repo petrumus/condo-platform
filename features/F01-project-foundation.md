@@ -13,7 +13,7 @@ Before any feature can be built, the project needs its core dependencies install
 **Key files to read before starting:**
 - `CLAUDE.md` — repo map and conventions
 - `package.json` — current dependencies
-- `condominium-platform-spec.md` §8, §9 — tech stack and Supabase architecture details
+- `docs/condominium-platform-spec.md` §8, §9 — tech stack and Supabase architecture details
 
 ---
 

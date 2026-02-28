@@ -8,7 +8,7 @@
 
 A multi-tenant SaaS platform for condominium management. Each condominium is an isolated workspace. Three system roles: `super-admin` (platform-wide), `admin` (per-condominium), `user` (per-condominium).
 
-**Full spec:** `condominium-platform-spec.md`
+**Full spec:** `docs/condominium-platform-spec.md`
 
 ---
 
@@ -32,7 +32,9 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 ```
 /
 ├── CLAUDE.md                        ← This file (project guide & progress tracker)
-├── condominium-platform-spec.md     ← Full product specification
+├── docs/
+│   ├── condominium-platform-spec.md ← Full product specification
+│   └── n8n-webhooks.md              ← n8n webhook payload reference (added in F15)
 ├── features/                        ← Feature task files (one per feature)
 │   ├── F01-project-foundation.md
 │   ├── F02-authentication.md
@@ -172,7 +174,26 @@ audit_logs            (id, condominium_id, actor_id, action, entity_type, entity
 1. When starting a new feature, create branch: `git checkout -b claude/feature-<slug>`
 2. Read the relevant feature file in `features/` for task list and context pointers
 3. Update status in this CLAUDE.md (below) when started and completed
-4. Push branch and open PR when feature is complete
+4. Push feature branch when all tasks are done
+
+---
+
+## Merge to Main Workflow
+
+**Never merge to main without explicit user confirmation.**
+
+When a feature branch is complete:
+1. Post a summary of everything implemented on the branch
+2. Ask the user: *"Ready to merge `claude/feature-<name>` into `main`? Confirm and I'll pull, merge, and push."*
+3. Only after the user confirms, run:
+   ```bash
+   git checkout main
+   git pull origin main
+   git merge claude/feature-<name> --no-ff -m "Merge feature: <name>"
+   git push origin main
+   ```
+4. Update the Features Progress table in this file: set status to `completed`, clear branch
+5. Log the merge in the Session Log below
 
 ---
 
@@ -206,3 +227,4 @@ audit_logs            (id, condominium_id, actor_id, action, entity_type, entity
 | Date | Action |
 |---|---|
 | 2026-02-28 | Initial CLAUDE.md created; all feature files scaffolded |
+| 2026-02-28 | Reorganized repo: spec moved to `docs/`; merge-to-main workflow added |

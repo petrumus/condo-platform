@@ -13,7 +13,7 @@ All significant actions are logged to `audit_logs`. Condominium admins can view 
 **Key files to read before starting:**
 - `CLAUDE.md` — schema for `audit_logs`
 - `features/F03-multitenancy-condominium.md` — RLS, is_admin, is_super_admin helpers
-- `condominium-platform-spec.md` §11
+- `docs/condominium-platform-spec.md` §11
 
 ---
 

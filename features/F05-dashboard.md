@@ -13,7 +13,7 @@ The dashboard is the landing page for authenticated users in their condominium w
 **Key files to read before starting:**
 - `CLAUDE.md` — repo map, planned route structure
 - `features/F03-multitenancy-condominium.md` — condominium context and layout
-- `condominium-platform-spec.md` §6.1
+- `docs/condominium-platform-spec.md` §6.1
 
 ---
 

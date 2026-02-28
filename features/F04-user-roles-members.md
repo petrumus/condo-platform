@@ -14,7 +14,7 @@ Members management lives under `/settings/members`. Admins can view all members,
 - `CLAUDE.md` — schema for `condominium_members`, `functional_titles`
 - `features/F02-authentication.md` — invitation flow (builds on it)
 - `features/F03-multitenancy-condominium.md` — RLS and role helpers
-- `condominium-platform-spec.md` §3
+- `docs/condominium-platform-spec.md` §3
 
 ---
 
