@@ -51,6 +51,7 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
+│   ├── global-error.tsx             ← Global error boundary (fallback for uncaught errors)
 │   ├── globals.css
 │   ├── app/
 │   │   └── page.tsx                 ← Condominium picker (for users with multiple memberships)
@@ -73,6 +74,7 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── privacy/page.tsx             ← Privacy policy
 │   ├── terms/page.tsx               ← Terms of service
 │   ├── super-admin/layout.tsx       ← Super-admin shell layout (nav links added in F17)
+│   ├── super-admin/error.tsx        ← Super-admin error boundary
 │   ├── super-admin/condominiums/
 │   │   ├── page.tsx                 ← Condominiums list with search (F17)
 │   │   ├── actions.ts               ← Super-admin server actions (F17)
@@ -343,3 +345,4 @@ When a feature branch is complete:
 | 2026-02-28 | Fix: middleware post-login redirect now checks super-admin role first and routes to `/super-admin/condominiums`, preventing super-admins with no memberships from landing on `/pending` |
 | 2026-02-28 | F06 Yearly Budget Plan completed on `claude/build-yearly-budget-plan-nypk2`: migration for budget_plans + budget_line_items with RLS, read view with year selector, admin-only editor with inline add/remove/reorder, publish confirmation dialog, server actions |
 | 2026-02-28 | F17 Super Admin Panel completed on `claude/build-super-admin-panel-INiZo`: condominiums list+search, create/edit/suspend/reactivate/delete condominiums, member management, invite admin, audit log page, /suspended page, middleware suspended-check, migration for condominiums.status + audit_logs + profiles RLS |
+| 2026-02-28 | Hotfix on main: added error boundaries (`global-error.tsx`, `super-admin/error.tsx`), env var validation in `createServiceClient`, `.env.local` created for local dev. Root cause: missing `SUPABASE_SERVICE_ROLE_KEY` in Vercel env vars |
