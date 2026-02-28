@@ -54,7 +54,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000009_documents.sql     ← document_folders + documents tables with RLS + effective_doc_visibility() (F11)
 │   ├── 20260228000010_announcements.sql ← announcements + announcement_attachments tables with RLS (F12)
 │   ├── 20260228000011_maintenance.sql  ← maintenance_requests + maintenance_attachments tables with RLS (F13)
-│   └── 20260228000012_units.sql        ← units + unit_owners tables with RLS (F14)
+│   ├── 20260228000012_units.sql        ← units + unit_owners tables with RLS (F14)
+│   └── 20260228000013_notifications.sql ← notifications table with RLS + realtime (F15)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -137,11 +138,16 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │   ├── page.tsx                 ← Requests list with status tabs (F13)
 │       │   ├── new/page.tsx             ← Submit request form (F13)
 │       │   └── [id]/page.tsx            ← Request detail + admin controls + photo gallery (F13)
+│       ├── notifications/
+│       │   ├── actions.ts               ← Notification server actions: markRead, markAllRead (F15)
+│       │   └── page.tsx                 ← Full notifications list with type badges (F15)
 │       ├── settings/
 │       │   └── units/
 │       │       ├── actions.ts           ← Units server actions: CRUD + owner management + recalculate (F14)
 │       │       ├── page.tsx             ← Admin unit register: table, add/edit/delete, owners (F14)
 │       │       └── my-unit/page.tsx     ← User: view own linked unit(s) (F14)
+├── hooks/
+│   └── use-notifications.ts             ← Realtime notifications hook (F15)
 ├── lib/
 │   ├── auth/get-user.ts             ← Server-side current user helper
 │   ├── auth/get-membership.ts       ← User membership query helper
@@ -152,6 +158,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── supabase/server.ts           ← Server Supabase client
 │   ├── supabase/middleware.ts        ← Middleware session update helper
 │   ├── types/database.ts            ← Generated Supabase DB types
+│   ├── notifications/
+│   │   └── create-notification.ts   ← createNotification + createNotificationForAllMembers (F15)
 │   ├── queries/
 │   │   └── administration.ts        ← getGovernanceMembers query (F08)
 │   ├── types/index.ts               ← Shared type exports
@@ -216,6 +224,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── new-folder-dialog.tsx        ← Create/edit folder dialog (F11)
 │   │   ├── upload-file-dialog.tsx       ← File upload dialog with visibility override (F11)
 │   │   └── edit-item-dialog.tsx         ← Edit/delete document dialogs (F11)
+│   ├── notifications/
+│   │   └── notification-bell.tsx        ← Bell icon with unread badge, dropdown, realtime (F15)
 │   └── ui/                          ← shadcn/ui components (button, input, etc.)
 ├── package.json
 ├── next.config.ts
@@ -423,7 +433,7 @@ When a feature branch is complete:
 | F12 | Announcements | `completed` | `claude/build-announcements-feature-rbxuB` |
 | F13 | Maintenance Requests | `completed` | `claude/build-maintenance-requests-VnTco` |
 | F14 | Units & Ownership | `completed` | `claude/build-units-ownership-feature-qUMFU` |
-| F15 | Notifications (In-App + Email) | `pending` | — |
+| F15 | Notifications (In-App + Email) | `completed` | `claude/build-notifications-feature-NHD0B` |
 | F16 | Audit Log | `pending` | — |
 | F17 | Super Admin Panel | `completed` | `claude/build-super-admin-panel-INiZo` |
 | F18 | Settings Pages | `pending` | — |
@@ -458,3 +468,4 @@ When a feature branch is complete:
 | 2026-02-28 | F12 Announcements completed on `claude/build-announcements-feature-rbxuB`: migration for announcements + announcement_attachments tables with RLS, announcement feed page (pinned at top, sorted by published_at), announcement detail page with body + attachments, admin create/edit forms with multi-file upload, pin/unpin toggle, delete with confirmation, signed-URL attachment download, 6 new components, announcement_attachments DB type added |
 | 2026-02-28 | F13 Maintenance Requests completed on `claude/build-maintenance-requests-VnTco`: migration for maintenance_requests + maintenance_attachments tables with RLS + updated_at trigger, requests list with status tab filters (users see own; admins see all), submit form with multi-photo upload, detail page with photo gallery + lightbox, admin controls (status/priority/notes), 6 new components, DB types updated |
 | 2026-02-28 | F14 Units & Ownership completed on `claude/build-units-ownership-feature-qUMFU`: migration for units + unit_owners tables with RLS, admin unit register page (table with add/edit/delete/owners), unit-dialog and unit-owners-dialog modals (link registered members or unregistered owners), recalculate shares action, user My Unit page, DB types updated |
+| 2026-02-28 | F15 Notifications completed on `claude/build-notifications-feature-NHD0B`: migration for notifications table with RLS + realtime enabled, NotificationBell client component with realtime Supabase subscription + unread badge + dropdown + bell shake animation, full notifications page, useNotifications hook, createNotification/createNotificationForAllMembers helpers, notification triggers wired into announcements/ballots/initiatives/maintenance actions, Supabase Edge Function for n8n webhooks, docs/n8n-webhooks.md payload reference |

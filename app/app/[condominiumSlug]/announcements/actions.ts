@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
+import { createNotificationForAllMembers } from "@/lib/notifications/create-notification"
 
 const ALLOWED_MIME_TYPES = [
   "application/pdf",
@@ -127,6 +128,15 @@ export async function publishAnnouncement(
   if (validFiles.length > 0) {
     await uploadAttachments(announcement.id, condominium.id, user.id, validFiles)
   }
+
+  // Notify all condominium members about the new announcement
+  await createNotificationForAllMembers({
+    condominiumId: condominium.id,
+    type: "announcement",
+    title: "New announcement",
+    body: title,
+    linkUrl: `/app/${condominiumSlug}/announcements/${announcement.id}`,
+  })
 
   revalidatePath(`/app/${condominiumSlug}/announcements`)
   revalidatePath(`/app/${condominiumSlug}/dashboard`)

@@ -1,7 +1,7 @@
 # F15 — Notifications (In-App + Email)
 
-**Status:** `pending`
-**Branch:** `claude/feature-notifications`
+**Status:** `completed`
+**Branch:** `claude/build-notifications-feature-NHD0B`
 **Spec sections:** §10 Notifications, §12 n8n Workflows
 
 ---
@@ -20,56 +20,61 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
 ## Tasks
 
 ### Database
-- [ ] Migration: `notifications` table
+- [x] Migration: `notifications` table — `supabase/migrations/20260228000013_notifications.sql`
   ```
   id, user_id, condominium_id, type text, title, body, read boolean default false,
   link_url text nullable, created_at
   ```
-- [ ] RLS: users can only SELECT their own notifications; INSERT via service role (server action / edge function); UPDATE (mark as read) for own notifications
+- [x] RLS: users can SELECT/UPDATE their own notifications; INSERT via service role only
+- [x] Realtime enabled on `notifications` table via `ALTER PUBLICATION supabase_realtime ADD TABLE`
 
 ### In-App Notification Bell
-- [ ] Update navbar component (`components/layout/navbar.tsx`) to include bell icon
-- [ ] Create `components/notifications/notification-bell.tsx` (client component):
-  - Shows unread count badge
-  - On click: opens dropdown with recent notifications
-  - Each item: title, short body, timestamp, link (if any)
-  - "Mark all as read" button
-  - Link to full notifications page (optional)
-- [ ] Create `app/app/[condominiumSlug]/notifications/page.tsx` — full list with pagination
+- [x] Updated navbar component (`components/layout/navbar.tsx`) — replaced placeholder with `<NotificationBell />`
+- [x] Created `components/notifications/notification-bell.tsx` (client component):
+  - Shows unread count badge (red, capped at "9+")
+  - On click: opens dropdown with 10 most recent notifications
+  - Each item: title, short body, timestamp, link button (if any), per-item mark-as-read
+  - "Mark all read" button in header
+  - "View all notifications" link in footer
+  - Bell shake animation on new notification via Web Animations API
+- [x] Created `app/app/[condominiumSlug]/notifications/page.tsx` — full list (100 items), badge per type, mark-all-read server action form
 
 ### Realtime Subscription
-- [ ] Create `hooks/use-notifications.ts` (client hook):
-  - On mount: subscribe to Supabase Realtime channel for `notifications` WHERE `user_id = me`
-  - On new notification: update local state, show toast
-  - Expose `notifications`, `unreadCount`, `markAsRead(id)`, `markAllAsRead()`
-- [ ] Server action: `markNotificationRead(id)` — sets read = true
-- [ ] Server action: `markAllNotificationsRead(condominiumId)` — bulk update
+- [x] Created `hooks/use-notifications.ts` (client hook):
+  - On mount: fetches last 50 notifications via Supabase query
+  - Subscribes to Supabase Realtime channel for INSERT and UPDATE on `notifications` filtered by `user_id`
+  - On new notification: prepends to local state + fires `onNew` callback (bell shake animation)
+  - Exposes `notifications`, `unreadCount`, `markAsRead(id)`, `markAllAsRead()`
+- [x] Server actions in `app/app/[condominiumSlug]/notifications/actions.ts`:
+  - `markNotificationRead(condominiumSlug, id)` — sets read = true
+  - `markAllNotificationsRead(condominiumSlug)` — bulk update for current condominium
 
 ### Notification Triggers (Server-Side)
-Create a helper `lib/notifications/create-notification.ts` that inserts a notification row:
-- [ ] Wire to **initiative status changed**: call from `approveInitiative`/`rejectInitiative` in F09 — notify submitter
-- [ ] Wire to **new ballot opened**: call from `openBallot` in F10 — notify all condominium members
-- [ ] Wire to **ballot results published**: call from `publishResults` in F10 — notify all members
-- [ ] Wire to **maintenance request status changed**: call from `updateRequestStatus` in F13 — notify submitter
-- [ ] Wire to **new announcement published**: call from `publishAnnouncement` in F12 — notify all members
+- [x] Created `lib/notifications/create-notification.ts`:
+  - `createNotification()` — single user, uses service role, silently ignores errors
+  - `createNotificationForAllMembers()` — fan-out to all condominium members, bulk insert
+- [x] Wired to **initiative approved**: `approveInitiative` in F09 — notifies submitter
+- [x] Wired to **initiative rejected**: `rejectInitiative` in F09 — notifies submitter with reason
+- [x] Wired to **new ballot opened**: `openBallot` in F10 — notifies all condominium members
+- [x] Wired to **ballot results published**: `publishResults` in F10 — notifies all members
+- [x] Wired to **maintenance request status changed**: `updateRequestStatus` in F13 — notifies submitter
+- [x] Wired to **new announcement published**: `publishAnnouncement` in F12 — notifies all members
 
 ### n8n Email Workflows
-Each workflow is set up in n8n (not in code, but document the webhook payload format):
-- [ ] Document webhook payload for each workflow in `docs/n8n-webhooks.md`:
-  - **Send invitation email** — payload: { email, invite_url, condominium_name }
-  - **Initiative status changed** — payload: { user_email, initiative_title, new_status, rejection_reason? }
-  - **New ballot opened** — payload: { condominium_id, ballot_title, close_at, ballot_url }
-  - **Ballot closing reminder (24h)** — scheduled: query voters who haven't voted
-  - **Ballot results published** — payload: { condominium_id, ballot_title, results_url }
-  - **Maintenance request status changed** — payload: { user_email, request_title, new_status }
-  - **New announcement** — payload: { condominium_id, announcement_title, announcement_url }
-- [ ] Create Supabase Edge Function `trigger-n8n-webhook.ts` — generic helper that POSTs to n8n webhook URL with payload; called from server actions
-- [ ] Add n8n webhook URL env vars: `N8N_WEBHOOK_BASE_URL`, `N8N_WEBHOOK_SECRET`
+- [x] Documented all webhook payloads in `docs/n8n-webhooks.md`:
+  - `invitation` — { email, invite_url, condominium_name }
+  - `initiative_status` — { user_email, initiative_title, new_status, rejection_reason? }
+  - `ballot_open` — { condominium_id, ballot_title, close_at, ballot_url }
+  - `ballot_closing_reminder` — scheduled workflow + query logic documented
+  - `ballot_results` — { condominium_id, ballot_title, results_url }
+  - `maintenance_status` — { user_email, request_title, new_status }
+  - `announcement` — { condominium_id, announcement_title, announcement_url }
+- [x] Created Supabase Edge Function `supabase/functions/trigger-n8n-webhook/index.ts` — generic Deno function that POSTs to `N8N_WEBHOOK_BASE_URL/webhook/<workflow>` with `X-Webhook-Secret` header
+- [x] Env vars documented: `N8N_WEBHOOK_BASE_URL`, `N8N_WEBHOOK_SECRET`
+- [x] Edge function excluded from Next.js TypeScript compilation via `tsconfig.json` exclude
 
 ### Notification Preferences (Optional)
-- [ ] Create `app/app/[condominiumSlug]/settings/notifications/page.tsx`:
-  - Toggle: receive email notifications for each notification type
-  - Store preferences in `notification_preferences` table or as JSONB on `condominium_members`
+- [ ] Skipped for now — can be added in F18 Settings Pages
 
 ---
 
