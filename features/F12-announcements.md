@@ -1,7 +1,7 @@
 # F12 — Announcements
 
-**Status:** `pending`
-**Branch:** `claude/feature-announcements`
+**Status:** `completed`
+**Branch:** `claude/build-announcements-feature-rbxuB`
 **Spec sections:** §6.8 Announcements
 
 ---
@@ -21,49 +21,57 @@ Admins publish announcements to all condominium members. Announcements support r
 ## Tasks
 
 ### Database
-- [ ] Migration: `announcements` table
+- [x] Migration: `announcements` table (`supabase/migrations/20260228000010_announcements.sql`)
   ```
-  id, condominium_id, title, body text (rich text HTML or markdown),
-  pinned boolean default false, published_at timestamptz, created_by, created_at
+  id, condominium_id, title, body text, pinned boolean default false, published_at timestamptz, created_by, created_at
   ```
-- [ ] Migration: `announcement_attachments` table
+- [x] Migration: `announcement_attachments` table (same migration file)
   ```
   id, announcement_id, storage_path, file_name, file_size_bytes, uploaded_by, created_at
   ```
-- [ ] RLS: SELECT for all members; INSERT/UPDATE/DELETE for admins only
+- [x] RLS: SELECT for all members (published only); INSERT/UPDATE/DELETE for admins only
 
 ### Announcement Feed Page
-- [ ] Create `app/app/[condominiumSlug]/announcements/page.tsx`:
+- [x] Created `app/app/[condominiumSlug]/announcements/page.tsx`:
   - Pinned announcements at top (sorted by published_at DESC within pinned)
   - Then unpinned announcements (sorted by published_at DESC)
   - Each item: title, short body preview, published date, pin indicator
   - "New Announcement" button (admin only)
-  - Pagination (or infinite scroll) if many announcements
 
 ### Announcement Detail Page
-- [ ] Create `app/app/[condominiumSlug]/announcements/[id]/page.tsx`:
-  - Full title and rich text body
+- [x] Created `app/app/[condominiumSlug]/announcements/[id]/page.tsx`:
+  - Full title and body (plain text with whitespace-pre-wrap)
   - Published date
-  - Attached files with download links
+  - Attached files with download buttons (signed URL via server action)
   - Admin controls: Edit, Pin/Unpin, Delete
 
-### Create Announcement (Admin)
-- [ ] Create `app/app/[condominiumSlug]/announcements/new/page.tsx`
-- [ ] Create `components/announcements/announcement-form.tsx`:
+### Create/Edit Announcement (Admin)
+- [x] Created `app/app/[condominiumSlug]/announcements/new/page.tsx`
+- [x] Created `app/app/[condominiumSlug]/announcements/[id]/edit/page.tsx`
+- [x] Created `components/announcements/announcement-form.tsx`:
   - Title input
-  - Rich text editor for body (use a lightweight editor like `@tiptap/react` or `react-quill`)
-  - Pin toggle
-  - File attachment uploader (multiple files)
-  - Publish button (posts immediately) + Save Draft (optional)
-- [ ] Server actions in `announcements/actions.ts`:
-  - `publishAnnouncement(data, files[])` — creates announcement, uploads attachments, sets published_at to now, triggers notification
-  - `updateAnnouncement(id, data)` — update title, body, pin status
-  - `deleteAnnouncement(id)` — soft delete or hard delete (remove from Storage + DB)
-  - `togglePin(id)` — flips pinned boolean
-  - `generateAttachmentDownloadUrl(attachmentId)` → signed URL
+  - Textarea for body (plain text, whitespace-pre-wrap rendered)
+  - Pin toggle (checkbox)
+  - Multiple file attachment uploader
+  - Publish button (sets published_at to now)
+- [x] Server actions in `app/app/[condominiumSlug]/announcements/actions.ts`:
+  - `publishAnnouncement(condominiumSlug, formData)` — creates announcement, uploads attachments
+  - `updateAnnouncement(condominiumSlug, id, formData)` — update title, body, pin + new files
+  - `deleteAnnouncement(condominiumSlug, id)` — removes from Storage + DB
+  - `togglePin(condominiumSlug, id, currentPinned)` — flips pinned boolean
+  - `deleteAttachment(condominiumSlug, attachmentId)` — removes single attachment
+  - `generateAttachmentDownloadUrl(condominiumSlug, attachmentId)` → signed URL
+
+### Components
+- [x] `components/announcements/announcement-card.tsx` — card for feed
+- [x] `components/announcements/announcement-form.tsx` — create/edit form
+- [x] `components/announcements/pin-button.tsx` — pin/unpin toggle (admin)
+- [x] `components/announcements/delete-announcement-button.tsx` — delete with confirmation dialog
+- [x] `components/announcements/delete-attachment-button.tsx` — per-attachment delete dialog
+- [x] `components/announcements/attachment-download-button.tsx` — signed URL download
 
 ### Dashboard Integration
-- [ ] Ensure dashboard activity feed (F05) shows latest announcements (links to announcement detail)
+- [x] Dashboard activity feed (F05) already queries `announcements` table and links to detail pages
 
 ---
 

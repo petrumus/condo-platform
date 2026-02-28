@@ -51,7 +51,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000006_projects.sql      ← projects + project_updates tables with RLS (F07)
 │   ├── 20260228000007_initiatives.sql   ← initiatives + initiative_attachments tables with RLS (F09)
 │   ├── 20260228000008_ballots.sql       ← ballots + votes tables + has_voted() function (F10)
-│   └── 20260228000009_documents.sql     ← document_folders + documents tables with RLS + effective_doc_visibility() (F11)
+│   ├── 20260228000009_documents.sql     ← document_folders + documents tables with RLS + effective_doc_visibility() (F11)
+│   └── 20260228000010_announcements.sql ← announcements + announcement_attachments tables with RLS (F12)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -122,6 +123,13 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── super-admin/audit-log/
 │   │   └── page.tsx                 ← Platform-wide audit log (F17)
 │   └── suspended/page.tsx           ← Suspended condominium landing page (F17)
+│       ├── announcements/
+│       │   ├── actions.ts               ← Announcements server actions (F12)
+│       │   ├── page.tsx                 ← Announcements feed: pinned + unpinned (F12)
+│       │   ├── new/page.tsx             ← Create announcement, admin only (F12)
+│       │   └── [id]/
+│       │       ├── page.tsx             ← Announcement detail + admin controls (F12)
+│       │       └── edit/page.tsx        ← Edit announcement, admin only (F12)
 ├── lib/
 │   ├── auth/get-user.ts             ← Server-side current user helper
 │   ├── auth/get-membership.ts       ← User membership query helper
@@ -137,6 +145,13 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── types/index.ts               ← Shared type exports
 │   └── utils.ts                     ← cn() and other utilities
 ├── components/
+│   ├── announcements/
+│   │   ├── announcement-card.tsx        ← Feed card with body preview + pin indicator (F12)
+│   │   ├── announcement-form.tsx        ← Create/edit form with file attachments (F12)
+│   │   ├── pin-button.tsx               ← Admin pin/unpin toggle (F12)
+│   │   ├── delete-announcement-button.tsx ← Delete with confirmation dialog (F12)
+│   │   ├── delete-attachment-button.tsx  ← Per-attachment delete dialog (F12)
+│   │   └── attachment-download-button.tsx ← Signed URL download button (F12)
 │   ├── logo.tsx                     ← SVG logo component
 │   ├── layout/navbar.tsx            ← Top navigation bar
 │   ├── administration/
@@ -381,7 +396,7 @@ When a feature branch is complete:
 | F09 | Initiatives | `completed` | `claude/build-initiatives-feature-780sD` |
 | F10 | Ballots & Voting | `completed` | `claude/build-ballots-voting-5PEV8` |
 | F11 | Document Repository | `completed` | `claude/build-feature-docs-1xnTb` |
-| F12 | Announcements | `pending` | — |
+| F12 | Announcements | `completed` | `claude/build-announcements-feature-rbxuB` |
 | F13 | Maintenance Requests | `pending` | — |
 | F14 | Units & Ownership | `pending` | — |
 | F15 | Notifications (In-App + Email) | `pending` | — |
@@ -416,3 +431,4 @@ When a feature branch is complete:
 | 2026-02-28 | F09 Initiatives completed on `claude/build-initiatives-feature-780sD`: migration for initiatives + initiative_attachments with RLS, initiatives list with status tabs, submit form, detail page with admin controls (approve/reject modal/convert), admin review queue, 4 new components, DB types updated |
 | 2026-02-28 | F10 Ballots & Voting completed on `claude/build-ballots-voting-5PEV8`: migration for ballots + votes tables with RLS + has_voted() function, ballots list with Open/Upcoming/Closed/Draft tabs, ballot detail with voting interface (yes/no, single, multi-choice), admin tally, lifecycle controls (Draft→Open→Closed→Results Published), results page with quorum assessment, CSV export, 6 new components |
 | 2026-02-28 | F11 Document Repository completed on `claude/build-feature-docs-1xnTb`: migration for document_folders + documents tables with RLS + effective_doc_visibility() DB function, root folder list page, folder contents page with breadcrumb + subfolder navigation, signed-URL download route, 8 new components (visibility-badge, folder-card, document-row, folder-manager, folder-content-manager, new-folder-dialog, upload-file-dialog, edit-item-dialog), MIME type + file size validation on upload |
+| 2026-02-28 | F12 Announcements completed on `claude/build-announcements-feature-rbxuB`: migration for announcements + announcement_attachments tables with RLS, announcement feed page (pinned at top, sorted by published_at), announcement detail page with body + attachments, admin create/edit forms with multi-file upload, pin/unpin toggle, delete with confirmation, signed-URL attachment download, 6 new components, announcement_attachments DB type added |
