@@ -403,6 +403,41 @@ export type Database = {
           }
         ]
       }
+      initiative_attachments: {
+        Row: {
+          id: string
+          initiative_id: string
+          storage_path: string
+          file_name: string
+          uploaded_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          initiative_id: string
+          storage_path: string
+          file_name: string
+          uploaded_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          initiative_id?: string
+          storage_path?: string
+          file_name?: string
+          uploaded_by?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "initiative_attachments_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       ballots: {
         Row: {
           id: string

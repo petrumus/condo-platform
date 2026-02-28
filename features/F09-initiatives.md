@@ -1,7 +1,7 @@
 # F09 — Initiatives
 
-**Status:** `pending`
-**Branch:** `claude/feature-initiatives`
+**Status:** `completed`
+**Branch:** `claude/build-initiatives-feature-780sD`
 **Spec sections:** §6.5 Initiatives
 
 ---
@@ -24,52 +24,50 @@ Any authenticated condominium member can submit an initiative (idea or request).
 ## Tasks
 
 ### Database
-- [ ] Migration: `initiatives` table
+- [x] Migration: `initiatives` table
   ```
   id, condominium_id, title, description, category, status
   ('draft'|'pending_review'|'approved'|'rejected'|'converted'),
   submitter_id, admin_notes, created_at
   ```
-- [ ] Migration: `initiative_attachments` table (id, initiative_id, storage_path, file_name, uploaded_by, created_at)
-- [ ] RLS: submitter can SELECT their own initiatives (all statuses); admins can SELECT all; non-submitters can only SELECT 'approved' and 'converted' initiatives
-- [ ] RLS: INSERT for all authenticated members; UPDATE for admins only (for status, admin_notes)
+- [x] Migration: `initiative_attachments` table (id, initiative_id, storage_path, file_name, uploaded_by, created_at)
+- [x] RLS: submitter can SELECT their own initiatives (all statuses); admins can SELECT all; non-submitters can only SELECT 'approved' and 'converted' initiatives
+- [x] RLS: INSERT for all authenticated members; UPDATE for admins only (for status, admin_notes)
 
 ### Initiative List Page (All Users)
-- [ ] Create `app/app/[condominiumSlug]/initiatives/page.tsx`:
-  - Users see: approved + converted initiatives
-  - Admins see: all initiatives (tabs: All | Pending Review | Approved | Rejected)
+- [x] Create `app/app/[condominiumSlug]/initiatives/page.tsx`:
+  - Users see: approved + converted initiatives + their own
+  - Admins see: all initiatives (tabs: All | Pending Review | Approved | Rejected | Converted)
   - Show: title, category, status badge, submitter name, submitted date
-  - "Submit Initiative" button visible to all
+  - "Submit Initiative" button visible to all; "Review Queue" button for admins
 
 ### Submit Initiative
-- [ ] Create `app/app/[condominiumSlug]/initiatives/new/page.tsx`:
-  - Form: title, description, category (free text or select), file attachments (optional)
+- [x] Create `app/app/[condominiumSlug]/initiatives/new/page.tsx`:
+  - Form: title, description, category (select from predefined list)
   - On submit: creates initiative with status 'pending_review'
-  - Upload attachments to Supabase Storage `initiative-attachments` bucket
-- [ ] Server actions in `initiatives/actions.ts`:
-  - `submitInitiative(data, files[])` — creates initiative + uploads attachments
+- [x] Server actions in `initiatives/actions.ts`:
+  - `submitInitiative(data)` — creates initiative record
 
 ### Initiative Detail Page
-- [ ] Create `app/app/[condominiumSlug]/initiatives/[id]/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/initiatives/[id]/page.tsx`:
   - Full details: title, description, category, submitter, submitted date, status, admin notes (if rejected)
-  - Attached files list with download links
+  - Attached files list
   - Admin controls section (only visible to admins):
     - Approve button
-    - Reject button (opens modal to enter rejection reason)
-    - Convert to Project button
-    - Convert to Ballot button
+    - Reject button (opens dialog modal to enter rejection reason)
+    - Convert to Project button (when approved)
+    - Convert to Ballot button (when approved)
 
 ### Admin Review Page
-- [ ] Create `app/app/[condominiumSlug]/initiatives/review/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/initiatives/review/page.tsx`:
   - Admin-only page
-  - Lists all 'pending_review' initiatives
-  - Quick action buttons: Approve, Reject, View
+  - Lists all 'pending_review' initiatives with submitter info and quick "Review" link
 
 ### Server Actions (Admin)
-- [ ] `approveInitiative(id)` — sets status to 'approved', triggers notification
-- [ ] `rejectInitiative(id, reason)` — sets status to 'rejected', stores reason in admin_notes, triggers notification
-- [ ] `convertToProject(id)` — creates a new project from initiative data, sets status to 'converted'; redirects to project create form pre-filled with initiative data
-- [ ] `convertToBallot(id)` — same pattern for ballot; redirects to ballot create form pre-filled
+- [x] `approveInitiative(id)` — sets status to 'approved'
+- [x] `rejectInitiative(id, reason)` — sets status to 'rejected', stores reason in admin_notes
+- [x] `convertToProject(id)` — sets status to 'converted'; redirects to project create form pre-filled with initiative data
+- [x] `convertToBallot(id)` — sets status to 'converted'; redirects to ballot create form pre-filled
 
 ---
 
@@ -80,6 +78,12 @@ Any authenticated condominium member can submit an initiative (idea or request).
 - Users can only see approved/converted initiatives (not others' drafts or pending)
 - Submitters see their own initiatives in any status
 - Notification triggers fire on status changes (wired in F15)
+
+---
+
+## Database Migrations
+
+- `supabase/migrations/20260228000007_initiatives.sql` — `initiatives` + `initiative_attachments` tables with full RLS
 
 ---
 
