@@ -1,6 +1,9 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { Separator } from "@/components/ui/separator"
+import { notFound } from "next/navigation"
+import { getCondominium } from "@/lib/condominium/get-condominium"
+import { getUserRole } from "@/lib/condominium/get-user-role"
+import { getUser } from "@/lib/auth/get-user"
+import { CondominiumProvider } from "@/lib/context/condominium-context"
+import { Navbar } from "@/components/layout/navbar"
 
 interface CondominiumLayoutProps {
   children: React.ReactNode
@@ -12,67 +15,28 @@ export default async function CondominiumLayout({
   params,
 }: CondominiumLayoutProps) {
   const { condominiumSlug } = await params
-  const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const [user, condominium] = await Promise.all([
+    getUser(),
+    getCondominium(condominiumSlug),
+  ])
 
-  if (!user) {
-    redirect("/")
+  if (!user || !condominium) {
+    notFound()
   }
 
-  const { data: condominium } = await supabase
-    .from("condominiums")
-    .select("id, name, slug, logo_url")
-    .eq("slug", condominiumSlug)
-    .single()
+  const userRole = await getUserRole(user.id, condominium.id)
 
-  if (!condominium) {
-    redirect("/")
-  }
-
-  // Verify membership
-  const { data: member } = await supabase
-    .from("condominium_members")
-    .select("system_role")
-    .eq("condominium_id", condominium.id)
-    .eq("user_id", user.id)
-    .single()
-
-  if (!member) {
-    redirect("/")
+  if (!userRole) {
+    notFound()
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Top navbar */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background">
-        <div className="flex h-14 items-center px-4 gap-4">
-          <div className="flex items-center gap-2 font-semibold text-sm">
-            {condominium.logo_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={condominium.logo_url}
-                alt={condominium.name}
-                className="h-7 w-7 rounded-md object-cover"
-              />
-            ) : (
-              <div className="h-7 w-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
-                {condominium.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <span>{condominium.name}</span>
-          </div>
-          <Separator orientation="vertical" className="h-5" />
-          <nav className="flex items-center gap-1 text-sm flex-1">
-            {/* Navigation links will be populated in F05 */}
-          </nav>
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="flex-1 p-6">{children}</main>
-    </div>
+    <CondominiumProvider condominium={condominium} userRole={userRole!}>
+      <div className="flex min-h-screen flex-col">
+        <Navbar user={user} />
+        <main className="flex-1 p-6">{children}</main>
+      </div>
+    </CondominiumProvider>
   )
 }
