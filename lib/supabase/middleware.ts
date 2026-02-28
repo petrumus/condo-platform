@@ -78,10 +78,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Authenticated but no condominium — send to pending
-    // (skip redirect loop: /pending itself must not redirect)
-    if (pathname !== "/pending") {
-      return redirectTo("/pending")
-    }
+    return redirectTo("/pending")
   }
 
   // ── Guard /pending for unauthenticated users ─────────────────────────────
