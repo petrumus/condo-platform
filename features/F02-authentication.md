@@ -8,7 +8,7 @@
 
 ## Context
 
-Authentication is handled entirely by Supabase Auth using Email (magic link or password). After first sign-in, users are in a "pending" state until an admin adds them to a condominium and assigns a role.
+Authentication is handled entirely by Supabase Auth using Google OAuth. After first sign-in, users are in a "pending" state until an admin adds them to a condominium and assigns a role.
 
 **Key files to read before starting:**
 - `CLAUDE.md` — repo map and conventions
@@ -27,7 +27,7 @@ Authentication is handled entirely by Supabase Auth using Email (magic link or p
 - [x] Create `app/pending/page.tsx` — page shown to authenticated users who are not yet members of any condominium
 
 ### Auth Logic
-- [x] Implement `signInWithOtp` (magic link) action in `app/auth/actions.ts`
+- [x] Implement `signInWithGoogle` (Google OAuth) action in `app/auth/actions.ts`
 - [x] Implement `signOut` server action
 - [x] Add post-signup hook: after a new user confirms email, create their profile record if one doesn't exist
 - [x] Create `lib/auth/get-user.ts` — helper to get current user server-side (used in server components and route handlers)
@@ -50,7 +50,7 @@ Authentication is handled entirely by Supabase Auth using Email (magic link or p
 
 ## Definition of Done
 
-- User can sign in via magic link email
+- User can sign in via Google OAuth
 - Unauthenticated users cannot access `/app/*` or `/super-admin/*`
 - New users without a condominium membership see the `/pending` page
 - Invited users can accept invitations and are added to the correct condominium with the correct role
@@ -59,7 +59,8 @@ Authentication is handled entirely by Supabase Auth using Email (magic link or p
 
 ## Notes
 
-- Use Supabase Auth `signInWithOtp` with `shouldCreateUser: true`
-- Email templates for magic link are configured in Supabase dashboard (not in code)
-- The invitation flow is separate from the magic link auth flow — invitation tokens are custom rows in the DB
+- Use Supabase Auth `signInWithOAuth` with `provider: "google"`
+- Google OAuth must be enabled in the Supabase dashboard (Authentication → Providers → Google) with Client ID and Secret from Google Cloud Console
+- The callback URL to register in Google Cloud Console: `https://<your-project>.supabase.co/auth/v1/callback`
+- The invitation flow is separate from the Google OAuth flow — invitation tokens are custom rows in the DB; after OAuth, users are redirected back to the invite page via the `next` query param
 - `super-admin` role will be stored in Supabase Auth user metadata or a separate `platform_roles` table (decide during implementation)

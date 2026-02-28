@@ -131,14 +131,14 @@ export default async function InvitePage({ params, searchParams }: InvitePagePro
             // Not signed in
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                Sign in with{" "}
+                Sign in with Google using{" "}
                 <span className="font-medium text-foreground">
                   {invitation.email}
                 </span>{" "}
                 to accept this invitation.
               </p>
               <Button className="w-full" asChild>
-                <Link href={`/?email=${encodeURIComponent(invitation.email)}`}>
+                <Link href={`/?next=${encodeURIComponent(`/invite/${token}`)}`}>
                   Sign in to accept
                 </Link>
               </Button>
