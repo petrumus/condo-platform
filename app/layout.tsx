@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Condo Platform",
   description: "Multi-tenant condominium management platform",
+  icons: { icon: "/logo.svg" },
 };
 
 export default function RootLayout({

@@ -3,7 +3,7 @@ import { signInWithGoogle } from "@/app/auth/actions"
 import { getUser } from "@/lib/auth/get-user"
 import { getUserMemberships } from "@/lib/auth/get-membership"
 import { Button } from "@/components/ui/button"
-import { Building2 } from "lucide-react"
+import { Logo } from "@/components/logo"
 
 interface HomePageProps {
   searchParams: Promise<{ error?: string; next?: string }>
@@ -30,9 +30,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Building2 className="h-6 w-6" />
-          </div>
+          <Logo className="h-14 w-14" />
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
               Condo Platform
@@ -86,6 +84,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <span className="font-medium text-foreground">
             Contact your condominium administrator.
           </span>
+        </p>
+
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          <a href="/privacy" className="underline hover:text-foreground">
+            Privacy Policy
+          </a>
+          {" · "}
+          <a href="/terms" className="underline hover:text-foreground">
+            Terms of Service
+          </a>
         </p>
       </div>
     </div>
