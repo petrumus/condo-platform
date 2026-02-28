@@ -19,7 +19,7 @@ export default async function InvitePage({ params, searchParams }: InvitePagePro
   const serviceClient = await createServiceClient()
   const { data: invitation } = await serviceClient
     .from("invitations")
-    .select("*, condominiums ( name, slug )")
+    .select("id, condominium_id, email, role, token, accepted_at, condominiums ( name, slug )")
     .eq("token", token)
     .is("accepted_at", null)
     .single()

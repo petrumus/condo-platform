@@ -19,7 +19,7 @@ export async function acceptInvitation(token: string, _formData?: FormData) {
 
   const { data: invitation, error: fetchError } = await serviceClient
     .from("invitations")
-    .select("*, condominiums ( slug )")
+    .select("id, condominium_id, email, role, token, accepted_at, condominiums ( slug )")
     .eq("token", token)
     .is("accepted_at", null)
     .single()
