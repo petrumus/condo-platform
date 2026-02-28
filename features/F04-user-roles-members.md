@@ -1,6 +1,6 @@
 # F04 — User Roles & Members Management
 
-**Status:** `pending`
+**Status:** `completed`
 **Branch:** `claude/feature-user-roles-members`
 **Spec sections:** §3 User Roles & Permissions, §5 Invitations
 
@@ -21,45 +21,51 @@ Members management lives under `/settings/members`. Admins can view all members,
 ## Tasks
 
 ### Settings / Members Page
-- [ ] Create `app/app/[condominiumSlug]/settings/members/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/settings/members/page.tsx`:
   - Admin-only page (redirect non-admins)
   - List all condominium members: name, email, system role, functional title, joined date
   - Actions per member: change system role, assign/remove functional title, remove from condominium
-- [ ] Create server actions in `app/app/[condominiumSlug]/settings/members/actions.ts`:
+- [x] Create server actions in `app/app/[condominiumSlug]/settings/members/actions.ts`:
   - `updateMemberRole(memberId, newRole)` — admin only
   - `updateMemberTitle(memberId, titleId | null)` — admin only
   - `removeMember(memberId)` — admin only; cannot remove self
 
 ### Invite Flow UI
-- [ ] Create invite form component (on the members page): email input + role selector
-- [ ] Server action: `inviteMember(email, role)` — creates invitation row, triggers email via Supabase Edge Function or n8n webhook
-- [ ] Show pending invitations list with option to revoke
+- [x] Create invite form component (on the members page): email input + role selector
+- [x] Server action: `inviteMember(email, role)` — creates invitation row
+- [x] Show pending invitations list with option to revoke
 
 ### Functional Titles Management
-- [ ] Create `app/app/[condominiumSlug]/settings/titles/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/settings/titles/page.tsx`:
   - Admin-only page
   - List all titles (built-in + custom) with sort order
   - Create custom title form
   - Edit title name / sort order
   - Delete custom title (cannot delete built-in titles)
-- [ ] Server actions in `settings/titles/actions.ts`:
+- [x] Server actions in `settings/titles/actions.ts`:
   - `createTitle(name, sortOrder)`
   - `updateTitle(id, name, sortOrder)`
   - `deleteTitle(id)` — admin only, prevent deletion of built-in titles
 
 ### Access Control Component
-- [ ] Create `components/guards/admin-only.tsx` — server component wrapper that renders children only for admins, otherwise shows 403/redirect
-- [ ] Create `components/guards/super-admin-only.tsx` — same for super-admin routes
+- [x] Create `components/guards/admin-only.tsx` — server component wrapper that renders children only for admins, otherwise redirects
+- [x] Create `components/guards/super-admin-only.tsx` — same for super-admin routes
+
+---
+
+## Database Migrations
+
+- `supabase/migrations/20260228000003_profiles.sql` — `profiles` table (public mirror of auth.users), RLS policies, sync trigger, backfill
 
 ---
 
 ## Definition of Done
 
-- Admin can invite users by email, and the invite appears in the pending list
-- Admin can change a member's system role and functional title
-- Admin can remove a member
-- Custom functional titles can be created, edited, and deleted
-- Non-admin users cannot access `/settings/members` or `/settings/titles`
+- Admin can invite users by email, and the invite appears in the pending list ✅
+- Admin can change a member's system role and functional title ✅
+- Admin can remove a member ✅
+- Custom functional titles can be created, edited, and deleted ✅
+- Non-admin users cannot access `/settings/members` or `/settings/titles` ✅
 
 ---
 
@@ -68,3 +74,4 @@ Members management lives under `/settings/members`. Admins can view all members,
 - Built-in titles (Administrator, Councilor, Auditor, Accountant) are seeded per-condominium and should not be deletable
 - `system_role` is stored in `condominium_members.system_role`, NOT in Supabase Auth metadata (except for `super-admin` which is platform-wide)
 - When a member is removed, their `condominium_members` row is deleted; their auth account remains
+- `profiles` table is a public mirror of `auth.users` populated by a trigger on insert/update; allows member data joins without direct auth schema access

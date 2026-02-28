@@ -44,7 +44,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 ├── supabase/migrations/             ← SQL migrations applied via `supabase db push`
 │   ├── 20260228000000_base_schema.sql
 │   ├── 20260228000001_invitations.sql
-│   └── 20260228000002_condominium_helpers.sql
+│   ├── 20260228000002_condominium_helpers.sql
+│   └── 20260228000003_profiles.sql      ← profiles table + sync trigger (F04)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -273,7 +274,7 @@ When a feature branch is complete:
 | F01 | Project Foundation & Setup | `completed` | `claude/build-pending-feature-2x0EO` |
 | F02 | Authentication | `completed` | `claude/build-authentication-I46RN` |
 | F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
-| F04 | User Roles & Members Management | `pending` | — |
+| F04 | User Roles & Members Management | `in_progress` | `claude/feature-user-roles-members` |
 | F05 | Dashboard / Home Page | `pending` | — |
 | F06 | Yearly Budget Plan | `pending` | — |
 | F07 | Projects | `pending` | — |
@@ -305,3 +306,4 @@ When a feature branch is complete:
 | 2026-02-28 | Added Supabase Migrations Workflow section to CLAUDE.md |
 | 2026-02-28 | F03 Multi-tenancy & Condominium Workspace completed on `claude/build-multitenancy-condominium-sVQC8`: condominium slug routing, tenant layout, RLS migrations, helper functions (`is_super_admin`, `is_admin`, `get_my_condominium_id`), functional titles seed trigger |
 | 2026-02-28 | PRs #13 and #14 fixed (middleware rename bug, missing privacy/terms pages, stale docs) and merged to main |
+| 2026-02-28 | F04 User Roles & Members Management started on `claude/feature-user-roles-members`: admin guards, members page, invite form, pending invitations, functional titles CRUD, profiles migration |
