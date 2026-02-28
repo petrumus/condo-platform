@@ -281,7 +281,7 @@ When a feature branch is complete:
 | F02 | Authentication | `completed` | `claude/build-authentication-I46RN` |
 | F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
 | F04 | User Roles & Members Management | `in_progress` | `claude/feature-user-roles-members` |
-| F05 | Dashboard / Home Page | `in_progress` | `claude/build-fifth-feature-F8aWs` |
+| F05 | Dashboard / Home Page | `completed` | `claude/build-fifth-feature-F8aWs` |
 | F06 | Yearly Budget Plan | `pending` | — |
 | F07 | Projects | `pending` | — |
 | F08 | Condominium Administration Page | `pending` | — |
@@ -314,3 +314,4 @@ When a feature branch is complete:
 | 2026-02-28 | PRs #13 and #14 fixed (middleware rename bug, missing privacy/terms pages, stale docs) and merged to main |
 | 2026-02-28 | F04 User Roles & Members Management started on `claude/feature-user-roles-members`: admin guards, members page, invite form, pending invitations, functional titles CRUD, profiles migration |
 | 2026-02-28 | F05 Dashboard / Home Page started on `claude/build-fifth-feature-F8aWs`: NavCard component, ActivityFeed component, full dashboard page (condominium header, 8-card nav grid, recent activity), slug-root redirect, condominium picker page, middleware multi-membership redirect |
+| 2026-02-28 | Fix: middleware post-login redirect now checks super-admin role first and routes to `/super-admin/condominiums`, preventing super-admins with no memberships from landing on `/pending` |
