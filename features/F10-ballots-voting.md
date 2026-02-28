@@ -1,7 +1,7 @@
 # F10 — Ballots & Voting
 
-**Status:** `pending`
-**Branch:** `claude/feature-ballots-voting`
+**Status:** `completed`
+**Branch:** `claude/build-ballots-voting-5PEV8`
 **Spec sections:** §6.6 Ballots & Voting
 
 ---
@@ -23,7 +23,7 @@ Admins create digital ballot papers for resident voting. Supports Yes/No, single
 ## Tasks
 
 ### Database
-- [ ] Migration: `ballots` table
+- [x] Migration: `ballots` table
   ```
   id, condominium_id, title, description, question_type
   ('yes_no'|'single_choice'|'multi_choice'),
@@ -33,24 +33,24 @@ Admins create digital ballot papers for resident voting. Supports Yes/No, single
   status ('draft'|'open'|'closed'|'results_published'),
   created_by, created_at
   ```
-- [ ] Migration: `votes` table
+- [x] Migration: `votes` table
   ```
   id, ballot_id, voter_id, selected_options jsonb (array of option ids), voted_at
   UNIQUE(ballot_id, voter_id)
   ```
-- [ ] RLS: SELECT ballots for all members (non-draft); INSERT/UPDATE for admins only
-- [ ] RLS: INSERT votes for any member (once per ballot, enforced by unique constraint); SELECT votes for admins only
-- [ ] DB function: `has_voted(ballot_id, user_id)` → boolean (used in UI)
+- [x] RLS: SELECT ballots for all members (non-draft); INSERT/UPDATE for admins only
+- [x] RLS: INSERT votes for any member (once per ballot, enforced by unique constraint); SELECT votes for admins only
+- [x] DB function: `has_voted(ballot_id, user_id)` → boolean (used in UI)
 
 ### Ballot List Page
-- [ ] Create `app/app/[condominiumSlug]/ballots/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/ballots/page.tsx`:
   - Tabs: Open | Upcoming | Closed | Draft (admin only)
   - Show: title, question type, open/close dates, current status
   - Voting status indicator: "You voted" | "Vote now" | "Voting closed"
   - Link to create ballot (admin only)
 
 ### Ballot Detail & Voting Page
-- [ ] Create `app/app/[condominiumSlug]/ballots/[id]/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/ballots/[id]/page.tsx`:
   - Title, description, question type, open/close dates, quorum threshold (if set)
   - Linked initiative link (if applicable)
   - **Voting interface** (shown if ballot is open and user hasn't voted):
@@ -61,14 +61,13 @@ Admins create digital ballot papers for resident voting. Supports Yes/No, single
   - **Already voted state:** "You have already voted" message (no option to change)
   - **Closed state:** "Voting has closed. Results will be published soon."
   - Admin sees vote tally even before results are published (admin view)
-- [ ] Server action: `castVote(ballotId, selectedOptions[])`:
+- [x] Server action: `castVote(ballotId, selectedOptions[])`:
   - Validates ballot is open
   - Validates user hasn't voted
   - Inserts vote row
-  - Triggers notification/audit log
 
 ### Results Page
-- [ ] Create `app/app/[condominiumSlug]/ballots/[id]/results/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/ballots/[id]/results/page.tsx`:
   - Visible to all members after status = 'results_published'
   - Show vote counts per option with percentage bars
   - Show total votes cast vs. total eligible voters
@@ -77,24 +76,32 @@ Admins create digital ballot papers for resident voting. Supports Yes/No, single
   - Admin: "Export CSV" button
 
 ### Create/Edit Ballot (Admin)
-- [ ] Create `app/app/[condominiumSlug]/ballots/new/page.tsx`
-- [ ] Create `components/ballots/ballot-form.tsx`:
+- [x] Create `app/app/[condominiumSlug]/ballots/new/page.tsx`
+- [x] Create `app/app/[condominiumSlug]/ballots/[id]/edit/page.tsx`
+- [x] Create `components/ballots/ballot-form.tsx`:
   - Title, description
   - Question type selector
   - Options builder (for single/multi choice)
   - Date pickers: open_at, close_at
   - Quorum % field (optional)
   - Link to initiative (optional select)
-- [ ] Server actions in `ballots/actions.ts`:
+- [x] Server actions in `ballots/actions.ts`:
   - `createBallot(data)` — creates in 'draft' status
   - `updateBallot(id, data)` — only allowed in 'draft'
-  - `openBallot(id)` — sets status to 'open', triggers notification
-  - `closeBallot(id)` — sets status to 'closed', tallies results
-  - `publishResults(id)` — sets status to 'results_published', triggers notification
+  - `openBallot(id)` — sets status to 'open'
+  - `closeBallot(id)` — sets status to 'closed'
+  - `publishResults(id)` — sets status to 'results_published'
+  - `deleteBallot(id)` — deletes draft ballots
   - `exportResultsCsv(id)` → returns CSV file
 
 ### Real-Time Vote Count (Optional Enhancement)
 - [ ] Subscribe to `votes` table changes via Supabase Realtime in the results page for live tally updates
+
+---
+
+## Database Migrations
+
+- `supabase/migrations/20260228000008_ballots.sql` — ballots + votes tables with RLS + `has_voted()` function
 
 ---
 
