@@ -1,7 +1,7 @@
 # F02 — Authentication
 
-**Status:** `pending`
-**Branch:** `claude/feature-authentication`
+**Status:** `completed`
+**Branch:** `claude/build-authentication-I46RN`
 **Spec sections:** §5 Authentication, §9 Edge Functions
 
 ---
@@ -20,31 +20,31 @@ Authentication is handled entirely by Supabase Auth using Email (magic link or p
 ## Tasks
 
 ### Pages & UI
-- [ ] Create `app/page.tsx` — marketing/login landing page with sign-in form (email input)
-- [ ] Create `app/auth/login/page.tsx` — dedicated login page if needed (or combine with root)
-- [ ] Create `app/auth/callback/route.ts` — handle Supabase email magic link / OAuth callback, exchange code for session
-- [ ] Create `app/auth/confirm/page.tsx` — "Check your email" confirmation page shown after magic link sent
-- [ ] Create `app/pending/page.tsx` — page shown to authenticated users who are not yet members of any condominium
+- [x] Create `app/page.tsx` — marketing/login landing page with sign-in form (email input)
+- [x] Create `app/auth/login/page.tsx` — dedicated login page if needed (or combine with root)
+- [x] Create `app/auth/callback/route.ts` — handle Supabase email magic link / OAuth callback, exchange code for session
+- [x] Create `app/auth/confirm/page.tsx` — "Check your email" confirmation page shown after magic link sent
+- [x] Create `app/pending/page.tsx` — page shown to authenticated users who are not yet members of any condominium
 
 ### Auth Logic
-- [ ] Implement `signInWithOtp` (magic link) action in `app/auth/actions.ts`
-- [ ] Implement `signOut` server action
-- [ ] Add post-signup hook: after a new user confirms email, create their profile record if one doesn't exist
-- [ ] Create `lib/auth/get-user.ts` — helper to get current user server-side (used in server components and route handlers)
-- [ ] Create `lib/auth/get-membership.ts` — helper to get user's membership for a given condominium (role, titles)
+- [x] Implement `signInWithOtp` (magic link) action in `app/auth/actions.ts`
+- [x] Implement `signOut` server action
+- [x] Add post-signup hook: after a new user confirms email, create their profile record if one doesn't exist
+- [x] Create `lib/auth/get-user.ts` — helper to get current user server-side (used in server components and route handlers)
+- [x] Create `lib/auth/get-membership.ts` — helper to get user's membership for a given condominium (role, titles)
 
 ### Middleware & Guards
-- [ ] Update `middleware.ts` (from F01) to:
+- [x] Update `middleware.ts` (from F01) to:
   - Redirect `/app/*` → `/` if not authenticated
   - Redirect `/super-admin/*` → `/` if not `super-admin` role
   - Redirect `/` → `/app/[slug]/dashboard` if authenticated and has a condominium membership
   - Redirect authenticated users with no membership → `/pending`
 
 ### Invitation Flow
-- [ ] Create DB table migration: `invitations` (id, condominium_id, email, role, token, accepted_at, created_by, created_at)
-- [ ] Create `app/invite/[token]/page.tsx` — invitation acceptance page
-- [ ] Supabase Edge Function (or server action): send invitation email with unique token link
-- [ ] Server action: accept invitation — creates `condominium_members` row, marks invitation accepted
+- [x] Create DB table migration: `invitations` (id, condominium_id, email, role, token, accepted_at, created_by, created_at)
+- [x] Create `app/invite/[token]/page.tsx` — invitation acceptance page
+- [x] Supabase Edge Function (or server action): send invitation email with unique token link
+- [x] Server action: accept invitation — creates `condominium_members` row, marks invitation accepted
 
 ---
 
