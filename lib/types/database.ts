@@ -673,6 +673,44 @@ export type Database = {
           }
         ]
       }
+      announcement_attachments: {
+        Row: {
+          id: string
+          announcement_id: string
+          storage_path: string
+          file_name: string
+          file_size_bytes: number | null
+          uploaded_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          announcement_id: string
+          storage_path: string
+          file_name: string
+          file_size_bytes?: number | null
+          uploaded_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          announcement_id?: string
+          storage_path?: string
+          file_name?: string
+          file_size_bytes?: number | null
+          uploaded_by?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_attachments_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       maintenance_requests: {
         Row: {
           id: string
