@@ -1,6 +1,8 @@
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 
 interface SuperAdminLayoutProps {
   children: React.ReactNode
@@ -19,8 +21,6 @@ export default async function SuperAdminLayout({
     redirect("/")
   }
 
-  // Only super-admins may access this section.
-  // The super-admin flag is stored in auth.users app_metadata.
   const isSuperAdmin =
     user.app_metadata?.role === "super-admin" ||
     user.app_metadata?.is_super_admin === true
@@ -42,7 +42,12 @@ export default async function SuperAdminLayout({
           </div>
           <Separator orientation="vertical" className="h-5" />
           <nav className="flex items-center gap-1 text-sm flex-1">
-            {/* Navigation links will be populated in F17 */}
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/super-admin/condominiums">Condominiums</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/super-admin/audit-log">Audit Log</Link>
+            </Button>
           </nav>
           <div className="ml-auto text-xs text-muted-foreground">
             {user.email}

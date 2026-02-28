@@ -99,5 +99,22 @@ export async function updateSession(request: NextRequest) {
     return redirectTo("/")
   }
 
+  // ── Suspended condominium guard ──────────────────────────────────────────
+  // For authenticated users accessing a tenant workspace, check if the
+  // condominium is suspended and redirect them to /suspended if so.
+  const appSlugMatch = pathname.match(/^\/app\/([^/]+)/)
+  if (appSlugMatch && user) {
+    const slug = appSlugMatch[1]
+    const { data: condo } = await supabase
+      .from("condominiums")
+      .select("status")
+      .eq("slug", slug)
+      .single()
+
+    if (condo?.status === "suspended") {
+      return redirectTo("/suspended")
+    }
+  }
+
   return supabaseResponse
 }

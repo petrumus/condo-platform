@@ -1,7 +1,7 @@
 # F17 — Super Admin Panel
 
-**Status:** `pending`
-**Branch:** `claude/feature-super-admin-panel`
+**Status:** `completed`
+**Branch:** `claude/build-super-admin-panel-INiZo`
 **Spec sections:** §3.1 super-admin role, §13 Routes (/super-admin/*)
 
 ---
@@ -22,49 +22,45 @@ Super-admins have platform-wide access. They manage condominium workspaces (crea
 ## Tasks
 
 ### Layout & Guard
-- [ ] Create `app/super-admin/layout.tsx`:
-  - Verifies `is_super_admin()` on every render; redirects to `/` if not
-  - Top navigation: Condominiums, Audit Log, back to platform home
-- [ ] Middleware already handles super-admin route protection (from F01/F02)
+- [x] Updated `app/super-admin/layout.tsx` with nav links (Condominiums, Audit Log)
+- [x] Middleware handles super-admin route protection (from F01/F02)
 
 ### Condominium List Page
-- [ ] Create `app/super-admin/condominiums/page.tsx`:
-  - Table of all condominiums: name, slug, admin count, member count, status (active/suspended), created_at
-  - Search by name
-  - "Create Condominium" button
-  - Per-row actions: View, Suspend/Reactivate, Delete
+- [x] Created `app/super-admin/condominiums/page.tsx`: table with name, slug, status, admin/member counts, search, Create button, per-row actions
+- [x] Created `app/super-admin/condominiums/condominium-row-actions.tsx`: View, Suspend/Reactivate, Delete (with typed-name confirmation dialog)
 
 ### Create Condominium
-- [ ] Create `app/super-admin/condominiums/new/page.tsx`:
-  - Form: name, slug (auto-generated from name, editable), address, description, logo upload
-  - On create: inserts `condominiums` row, seeds built-in functional titles
-- [ ] Server action: `createCondominium(data, logo?)` — creates condominium, seeds titles, creates initial admin member record if email provided
+- [x] Created `app/super-admin/condominiums/new/page.tsx`
+- [x] Created `app/super-admin/condominiums/new/create-condominium-form.tsx`: slug auto-generated from name, editable
+- [x] Server action: `createCondominium` — creates condominium row (functional titles seeded via DB trigger)
 
 ### Condominium Detail Page
-- [ ] Create `app/super-admin/condominiums/[id]/page.tsx`:
-  - Condominium details (name, slug, address, logo, description)
-  - Edit button (inline or separate edit page)
-  - Member list: all members with their roles
-  - Admin management: assign/remove admin role to existing members
-  - Invite new admin by email
-  - Danger zone: Suspend / Delete condominium
+- [x] Created `app/super-admin/condominiums/[id]/page.tsx`: details, member list, invite admin, pending invitations, danger zone
+- [x] Created `app/super-admin/condominiums/[id]/edit-condominium-form.tsx`
+- [x] Created `app/super-admin/condominiums/[id]/invite-admin-form.tsx`
+- [x] Created `app/super-admin/condominiums/[id]/member-row.tsx`: role change, remove member
+- [x] Created `app/super-admin/condominiums/[id]/danger-zone.tsx`: suspend/reactivate/delete
 
 ### Condominium Status Management
-- [ ] Add `status ('active'|'suspended')` field to `condominiums` table
-- [ ] Server action: `suspendCondominium(id)` — sets status to 'suspended'
-- [ ] Server action: `reactivateCondominium(id)` — sets status to 'active'
-- [ ] Server action: `deleteCondominium(id)` — hard delete (with confirmation; cascades via FK)
-- [ ] Middleware: redirect condominium members to a "suspended" page if their condo is suspended
+- [x] Migration adds `status ('active'|'suspended')` to `condominiums` table
+- [x] Server actions: `suspendCondominium`, `reactivateCondominium`, `deleteCondominium`
+- [x] Created `app/suspended/page.tsx` — shown when a suspended condominium is accessed
+- [x] Middleware redirects members of suspended condominiums to `/suspended`
 
 ### Super Admin Audit Log
-- [ ] Create `app/super-admin/audit-log/page.tsx`:
-  - Reuse `audit-log-table` component from F16
-  - Show condominium filter column and filter dropdown
-  - Date range + actor + entity type filters
+- [x] Created `app/super-admin/audit-log/page.tsx`: filterable table (condominium, action, date range), actor names from profiles
 
 ### Assign Super-Admin Role
-- [ ] Super-admin can grant super-admin role to other users via Supabase Auth admin API
-- [ ] Create `app/super-admin/admins/page.tsx` — list of all super-admins (optional, but useful)
+- [ ] Skipped — requires service role key; out of scope for this feature
+
+---
+
+## Database Migrations
+
+- `supabase/migrations/20260228000005_super_admin.sql`
+  - Adds `status` column to `condominiums` table
+  - Creates `audit_logs` table with RLS policies
+  - Adds super-admin bypass policy for `profiles`
 
 ---
 
