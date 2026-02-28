@@ -34,7 +34,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ user }: NavbarProps) {
-  const { condominium } = useCondominium()
+  const { condominium, userRole } = useCondominium()
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -126,17 +126,19 @@ export function Navbar({ user }: NavbarProps) {
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={`${baseHref}/settings/general`} className="flex items-center gap-2">
+                <Link href={`${baseHref}/settings/profile`} className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href={`${baseHref}/settings/general`} className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
+              {userRole === "admin" && (
+                <DropdownMenuItem asChild>
+                  <Link href={`${baseHref}/settings/general`} className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleSignOut}

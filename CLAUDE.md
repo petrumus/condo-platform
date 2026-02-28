@@ -215,6 +215,7 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── admin-maintenance-actions.tsx    ← Admin status/priority/notes controls (F13)
 │   │   └── photo-gallery.tsx               ← On-demand signed-URL photo gallery + lightbox (F13)
 │   ├── settings/
+│   │   ├── settings-nav.tsx             ← Sidebar nav client component (F18)
 │   │   └── units/
 │   │       ├── unit-dialog.tsx              ← Add/edit unit modal form (F14)
 │   │       ├── unit-owners-dialog.tsx       ← Manage owners per unit (add registered/unregistered, remove) (F14)
@@ -440,7 +441,7 @@ When a feature branch is complete:
 | F15 | Notifications (In-App + Email) | `completed` | `claude/build-notifications-feature-NHD0B` |
 | F16 | Audit Log | `completed` | `claude/build-audit-log-feature-Q6L7e` |
 | F17 | Super Admin Panel | `completed` | `claude/build-super-admin-panel-INiZo` |
-| F18 | Settings Pages | `pending` | — |
+| F18 | Settings Pages | `completed` | `claude/build-claude-settings-pages-BCKrF` |
 
 ---
 
@@ -475,3 +476,4 @@ When a feature branch is complete:
 | 2026-02-28 | F15 Notifications completed on `claude/build-notifications-feature-NHD0B`: migration for notifications table with RLS + realtime enabled, NotificationBell client component with realtime Supabase subscription + unread badge + dropdown + bell shake animation, full notifications page, useNotifications hook, createNotification/createNotificationForAllMembers helpers, notification triggers wired into announcements/ballots/initiatives/maintenance actions, Supabase Edge Function for n8n webhooks, docs/n8n-webhooks.md payload reference |
 | 2026-02-28 | **TODO (F15 follow-up):** n8n email notifications deferred. Edge function exists but not deployed. To activate: (1) `supabase functions deploy trigger-n8n-webhook`, (2) set `N8N_WEBHOOK_BASE_URL` + `N8N_WEBHOOK_SECRET` secrets, (3) add fire-and-forget fetch calls to relevant server actions. See `features/F15-notifications.md` n8n section for full details. |
 | 2026-02-28 | F16 Audit Log completed on `claude/build-audit-log-feature-Q6L7e`: `lib/audit/log-action.ts` helper (service-role, error-swallowing), logAction wired into 8 server action files (members, budget, projects, initiatives, ballots, documents, announcements, maintenance), admin-only audit-log page at `settings/audit-log` with filtering (action, actor, entity type, date range) + server-side pagination; no new migration needed (audit_logs table already in F17 migration) |
+| 2026-02-28 | F18 Settings Pages completed on `claude/build-claude-settings-pages-BCKrF`: settings shell layout with sidebar nav (role-aware), settings index redirect, general settings page (edit name/address/description/logo, slug read-only), profile settings page (edit display name + avatar for all users), SettingsNav client component, navbar updated (Profile → settings/profile, Settings shown only to admins) |
