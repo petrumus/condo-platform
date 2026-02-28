@@ -50,13 +50,16 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
 │   ├── globals.css
+│   ├── app/
+│   │   └── page.tsx                 ← Condominium picker (for users with multiple memberships)
 │   ├── auth/
 │   │   ├── actions.ts               ← signInWithGoogle, signOut server actions
 │   │   ├── callback/route.ts        ← OAuth callback handler
 │   │   └── confirm/page.tsx         ← "Check your email" page
 │   ├── app/[condominiumSlug]/
 │   │   ├── layout.tsx               ← Tenant layout (navbar, context provider)
-│   │   └── dashboard/page.tsx       ← Dashboard placeholder
+│   │   ├── page.tsx                 ← Slug root redirect → dashboard
+│   └── dashboard/page.tsx       ← Dashboard (condominium header, nav cards, activity feed)
 │   ├── invite/[token]/
 │   │   ├── page.tsx                 ← Invitation acceptance page
 │   │   └── actions.ts               ← Accept invitation server action
@@ -79,6 +82,9 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 ├── components/
 │   ├── logo.tsx                     ← SVG logo component
 │   ├── layout/navbar.tsx            ← Top navigation bar
+│   ├── dashboard/
+│   │   ├── nav-card.tsx             ← Navigation card (icon + title + description)
+│   │   └── activity-feed.tsx        ← Recent activity feed (announcements, ballots, initiatives)
 │   └── ui/                          ← shadcn/ui components (button, input, etc.)
 ├── package.json
 ├── next.config.ts
@@ -275,7 +281,7 @@ When a feature branch is complete:
 | F02 | Authentication | `completed` | `claude/build-authentication-I46RN` |
 | F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
 | F04 | User Roles & Members Management | `in_progress` | `claude/feature-user-roles-members` |
-| F05 | Dashboard / Home Page | `pending` | — |
+| F05 | Dashboard / Home Page | `in_progress` | `claude/build-fifth-feature-F8aWs` |
 | F06 | Yearly Budget Plan | `pending` | — |
 | F07 | Projects | `pending` | — |
 | F08 | Condominium Administration Page | `pending` | — |
@@ -307,3 +313,4 @@ When a feature branch is complete:
 | 2026-02-28 | F03 Multi-tenancy & Condominium Workspace completed on `claude/build-multitenancy-condominium-sVQC8`: condominium slug routing, tenant layout, RLS migrations, helper functions (`is_super_admin`, `is_admin`, `get_my_condominium_id`), functional titles seed trigger |
 | 2026-02-28 | PRs #13 and #14 fixed (middleware rename bug, missing privacy/terms pages, stale docs) and merged to main |
 | 2026-02-28 | F04 User Roles & Members Management started on `claude/feature-user-roles-members`: admin guards, members page, invite form, pending invitations, functional titles CRUD, profiles migration |
+| 2026-02-28 | F05 Dashboard / Home Page started on `claude/build-fifth-feature-F8aWs`: NavCard component, ActivityFeed component, full dashboard page (condominium header, 8-card nav grid, recent activity), slug-root redirect, condominium picker page, middleware multi-membership redirect |

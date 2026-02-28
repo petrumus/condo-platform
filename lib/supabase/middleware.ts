@@ -61,20 +61,25 @@ export async function updateSession(request: NextRequest) {
 
   // ── Post-login redirect for authenticated users hitting "/" ──────────────
   if (pathname === "/" && user) {
-    // Check if user has any memberships
     const { data: memberships } = await supabase
       .from("condominium_members")
       .select("*, condominiums ( slug )")
       .eq("user_id", user.id)
-      .limit(1)
+      .limit(2)
 
-    if (memberships && memberships.length > 0) {
+    if (memberships && memberships.length === 1) {
+      // Exactly one condominium — go straight to its dashboard
       const membership = memberships[0] as {
         condominiums: { slug: string } | null
       }
       if (membership.condominiums?.slug) {
         return redirectTo(`/app/${membership.condominiums.slug}/dashboard`)
       }
+    }
+
+    if (memberships && memberships.length > 1) {
+      // Multiple condominiums — show the picker
+      return redirectTo("/app")
     }
 
     // Authenticated but no condominium — send to pending
