@@ -61,6 +61,13 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
 - [x] Wired to **new announcement published**: `publishAnnouncement` in F12 — notifies all members
 
 ### n8n Email Workflows
+
+> **TODO (deferred):** The edge function is written but not yet deployed or wired into the server actions.
+> Before enabling email notifications, you must:
+> 1. Deploy the edge function: `supabase functions deploy trigger-n8n-webhook`
+> 2. Set secrets: `supabase secrets set N8N_WEBHOOK_BASE_URL=...` and `supabase secrets set N8N_WEBHOOK_SECRET=...`
+> 3. Add fire-and-forget `fetch` calls to the edge function inside the relevant server actions (announcements, ballots, initiatives, maintenance) following the payloads in `docs/n8n-webhooks.md`
+
 - [x] Documented all webhook payloads in `docs/n8n-webhooks.md`:
   - `invitation` — { email, invite_url, condominium_name }
   - `initiative_status` — { user_email, initiative_title, new_status, rejection_reason? }
