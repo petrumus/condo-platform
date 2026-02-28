@@ -142,25 +142,31 @@ export type Database = {
           id: string
           condominium_id: string
           unit_number: string
-          floor: number | null
-          area_m2: number | null
+          floor: string | null
+          building_section: string | null
+          area_m2: number
           ownership_share_pct: number | null
+          created_at: string
         }
         Insert: {
           id?: string
           condominium_id: string
           unit_number: string
-          floor?: number | null
-          area_m2?: number | null
+          floor?: string | null
+          building_section?: string | null
+          area_m2: number
           ownership_share_pct?: number | null
+          created_at?: string
         }
         Update: {
           id?: string
           condominium_id?: string
           unit_number?: string
-          floor?: number | null
-          area_m2?: number | null
+          floor?: string | null
+          building_section?: string | null
+          area_m2?: number
           ownership_share_pct?: number | null
+          created_at?: string
         }
         Relationships: [
           {
@@ -179,6 +185,7 @@ export type Database = {
           user_id: string | null
           owner_name: string
           owner_email: string | null
+          created_at: string
         }
         Insert: {
           id?: string
@@ -186,6 +193,7 @@ export type Database = {
           user_id?: string | null
           owner_name: string
           owner_email?: string | null
+          created_at?: string
         }
         Update: {
           id?: string
@@ -193,6 +201,7 @@ export type Database = {
           user_id?: string | null
           owner_name?: string
           owner_email?: string | null
+          created_at?: string
         }
         Relationships: [
           {

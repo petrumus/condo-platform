@@ -53,7 +53,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000008_ballots.sql       ← ballots + votes tables + has_voted() function (F10)
 │   ├── 20260228000009_documents.sql     ← document_folders + documents tables with RLS + effective_doc_visibility() (F11)
 │   ├── 20260228000010_announcements.sql ← announcements + announcement_attachments tables with RLS (F12)
-│   └── 20260228000011_maintenance.sql  ← maintenance_requests + maintenance_attachments tables with RLS (F13)
+│   ├── 20260228000011_maintenance.sql  ← maintenance_requests + maintenance_attachments tables with RLS (F13)
+│   └── 20260228000012_units.sql        ← units + unit_owners tables with RLS (F14)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -136,6 +137,11 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │       │   ├── page.tsx                 ← Requests list with status tabs (F13)
 │       │   ├── new/page.tsx             ← Submit request form (F13)
 │       │   └── [id]/page.tsx            ← Request detail + admin controls + photo gallery (F13)
+│       ├── settings/
+│       │   └── units/
+│       │       ├── actions.ts           ← Units server actions: CRUD + owner management + recalculate (F14)
+│       │       ├── page.tsx             ← Admin unit register: table, add/edit/delete, owners (F14)
+│       │       └── my-unit/page.tsx     ← User: view own linked unit(s) (F14)
 ├── lib/
 │   ├── auth/get-user.ts             ← Server-side current user helper
 │   ├── auth/get-membership.ts       ← User membership query helper
@@ -196,6 +202,11 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── maintenance-request-form.tsx     ← Submit request form with photo upload (F13)
 │   │   ├── admin-maintenance-actions.tsx    ← Admin status/priority/notes controls (F13)
 │   │   └── photo-gallery.tsx               ← On-demand signed-URL photo gallery + lightbox (F13)
+│   ├── settings/
+│   │   └── units/
+│   │       ├── unit-dialog.tsx              ← Add/edit unit modal form (F14)
+│   │       ├── unit-owners-dialog.tsx       ← Manage owners per unit (add registered/unregistered, remove) (F14)
+│   │       └── units-table.tsx             ← Client table with edit/delete/owners dialogs + recalculate (F14)
 │   ├── documents/
 │   │   ├── visibility-badge.tsx         ← Colored badge for public/members/admin-only (F11)
 │   │   ├── folder-card.tsx              ← Folder card with visibility badge + file count (F11)
@@ -411,7 +422,7 @@ When a feature branch is complete:
 | F11 | Document Repository | `completed` | `claude/build-feature-docs-1xnTb` |
 | F12 | Announcements | `completed` | `claude/build-announcements-feature-rbxuB` |
 | F13 | Maintenance Requests | `completed` | `claude/build-maintenance-requests-VnTco` |
-| F14 | Units & Ownership | `pending` | — |
+| F14 | Units & Ownership | `completed` | `claude/build-units-ownership-feature-qUMFU` |
 | F15 | Notifications (In-App + Email) | `pending` | — |
 | F16 | Audit Log | `pending` | — |
 | F17 | Super Admin Panel | `completed` | `claude/build-super-admin-panel-INiZo` |
@@ -446,3 +457,4 @@ When a feature branch is complete:
 | 2026-02-28 | F11 Document Repository completed on `claude/build-feature-docs-1xnTb`: migration for document_folders + documents tables with RLS + effective_doc_visibility() DB function, root folder list page, folder contents page with breadcrumb + subfolder navigation, signed-URL download route, 8 new components (visibility-badge, folder-card, document-row, folder-manager, folder-content-manager, new-folder-dialog, upload-file-dialog, edit-item-dialog), MIME type + file size validation on upload |
 | 2026-02-28 | F12 Announcements completed on `claude/build-announcements-feature-rbxuB`: migration for announcements + announcement_attachments tables with RLS, announcement feed page (pinned at top, sorted by published_at), announcement detail page with body + attachments, admin create/edit forms with multi-file upload, pin/unpin toggle, delete with confirmation, signed-URL attachment download, 6 new components, announcement_attachments DB type added |
 | 2026-02-28 | F13 Maintenance Requests completed on `claude/build-maintenance-requests-VnTco`: migration for maintenance_requests + maintenance_attachments tables with RLS + updated_at trigger, requests list with status tab filters (users see own; admins see all), submit form with multi-photo upload, detail page with photo gallery + lightbox, admin controls (status/priority/notes), 6 new components, DB types updated |
+| 2026-02-28 | F14 Units & Ownership completed on `claude/build-units-ownership-feature-qUMFU`: migration for units + unit_owners tables with RLS, admin unit register page (table with add/edit/delete/owners), unit-dialog and unit-owners-dialog modals (link registered members or unregistered owners), recalculate shares action, user My Unit page, DB types updated |

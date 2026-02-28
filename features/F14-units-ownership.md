@@ -1,7 +1,7 @@
 # F14 — Units & Ownership
 
-**Status:** `pending`
-**Branch:** `claude/feature-units-ownership`
+**Status:** `completed`
+**Branch:** `claude/build-units-ownership-feature-qUMFU`
 **Spec sections:** §6.10 Units & Ownership
 
 ---
@@ -21,22 +21,22 @@ Each condominium maintains a register of units (apartments). Each unit has an ar
 ## Tasks
 
 ### Database
-- [ ] Migration: `units` table
+- [x] Migration: `units` table
   ```
   id, condominium_id, unit_number text, floor text nullable,
   building_section text nullable, area_m2 numeric, ownership_share_pct numeric nullable,
   created_at
   ```
-- [ ] Migration: `unit_owners` table
+- [x] Migration: `unit_owners` table
   ```
   id, unit_id, user_id uuid nullable fk (auth.users), owner_name text, owner_email text nullable,
   created_at
   ```
-- [ ] RLS: SELECT for all members; INSERT/UPDATE/DELETE for admins only
-- [ ] DB trigger or function: auto-calculate `ownership_share_pct` from `area_m2` relative to total area if ownership_share_pct is null (optional — admin can also enter manually)
+- [x] RLS: SELECT for all members; INSERT/UPDATE/DELETE for admins only
+- [x] DB trigger or function: auto-calculate `ownership_share_pct` from `area_m2` relative to total area if ownership_share_pct is null (implemented as `recalculateOwnershipShares` server action)
 
 ### Unit Register Page (Admin)
-- [ ] Create `app/app/[condominiumSlug]/settings/units/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/settings/units/page.tsx`:
   - Admin-only page
   - Table of all units: unit number, floor, section, area, ownership share, owner(s)
   - "Add Unit" button
@@ -44,16 +44,19 @@ Each condominium maintains a register of units (apartments). Each unit has an ar
   - Summary at bottom: total units, total area, ownership share total (should sum to 100%)
 
 ### Add / Edit Unit
-- [ ] Create `components/settings/units/unit-dialog.tsx` — modal form:
+- [x] Create `components/settings/units/unit-dialog.tsx` — modal form:
   - Unit number (required)
   - Floor (optional text)
   - Building section (optional text)
   - Area in m² (required)
   - Ownership share % (optional — if blank, show auto-calculated value)
-  - Owner(s) section: add existing members (user lookup) or enter unregistered owner (name + email)
+- [x] Create `components/settings/units/unit-owners-dialog.tsx` — manage owners per unit:
+  - Add existing members (user lookup) or enter unregistered owner (name + email)
+  - Remove owners with trash icon
+- [x] Create `components/settings/units/units-table.tsx` — client table with edit/delete/owners dialogs
 
 ### Server Actions
-- [ ] Server actions in `settings/units/actions.ts`:
+- [x] Server actions in `settings/units/actions.ts`:
   - `createUnit(data)` — creates unit row
   - `updateUnit(id, data)` — updates unit fields
   - `deleteUnit(id)` — removes unit and its owner records
@@ -62,8 +65,17 @@ Each condominium maintains a register of units (apartments). Each unit has an ar
   - `recalculateOwnershipShares(condominiumId)` — recalculates all shares based on area_m2
 
 ### User: My Unit View
-- [ ] On the user profile or a dedicated page, show the user's unit details (if linked via unit_owners.user_id)
-- [ ] Alternatively, add a "My Unit" section to the dashboard or settings
+- [x] Created `app/app/[condominiumSlug]/settings/units/my-unit/page.tsx`:
+  - Shows user's linked unit(s) with area, floor, section, ownership share
+  - Shows ownership record details (name, email)
+  - Empty state with instructions to contact admin
+  - Admins are redirected to the full units admin page
+
+---
+
+## Database Migrations Added
+
+- `supabase/migrations/20260228000012_units.sql` — `units` + `unit_owners` tables with RLS
 
 ---
 
