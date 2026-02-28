@@ -240,6 +240,7 @@ export type Database = {
           category: string
           amount: number
           notes: string | null
+          sort_order: number
         }
         Insert: {
           id?: string
@@ -247,6 +248,7 @@ export type Database = {
           category: string
           amount: number
           notes?: string | null
+          sort_order?: number
         }
         Update: {
           id?: string
@@ -254,6 +256,7 @@ export type Database = {
           category?: string
           amount?: number
           notes?: string | null
+          sort_order?: number
         }
         Relationships: [
           {

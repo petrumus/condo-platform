@@ -1,7 +1,7 @@
 # F06 — Yearly Budget Plan
 
-**Status:** `pending`
-**Branch:** `claude/feature-budget-plan`
+**Status:** `completed`
+**Branch:** `claude/build-yearly-budget-plan-nypk2`
 **Spec sections:** §6.2 Yearly Budget Plan
 
 ---
@@ -20,40 +20,45 @@ One published budget per year per condominium. Structured as line items (categor
 ## Tasks
 
 ### Database
-- [ ] Migration: `budget_plans` table (id, condominium_id, year int, status 'draft'|'published', published_at)
-- [ ] Migration: `budget_line_items` table (id, budget_plan_id, category text, amount numeric, notes text, sort_order int)
-- [ ] RLS: SELECT for all members; INSERT/UPDATE/DELETE for admin only on `budget_plans`
-- [ ] RLS: INSERT/UPDATE/DELETE for admin only on `budget_line_items`
+- [x] Migration: `budget_plans` table (id, condominium_id, year int, status 'draft'|'published', published_at)
+- [x] Migration: `budget_line_items` table (id, budget_plan_id, category text, amount numeric, notes text, sort_order int)
+- [x] RLS: SELECT for all members; admins also see drafts; INSERT/UPDATE/DELETE for admin only on `budget_plans`
+- [x] RLS: SELECT mirrors plan visibility; INSERT/UPDATE/DELETE for admin only on `budget_line_items`
 
 ### Read-Only Budget View
-- [ ] Create `app/app/[condominiumSlug]/budget/[year]/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/budget/[year]/page.tsx`:
   - Fetch published budget for the given year
   - Show "No budget published for [year]" if none exists
   - Display line items in a table: Category | Planned Amount | Notes
   - Show total at the bottom
   - Display publication date
-- [ ] Create `components/budget/budget-table.tsx` — reusable table component
-- [ ] Create `components/budget/year-selector.tsx` — navigate between available years
+- [x] Create `components/budget/budget-table.tsx` — reusable table component
+- [x] Create `components/budget/year-selector.tsx` — navigate between available years
 
 ### Budget Editor (Admin Only)
-- [ ] Create `app/app/[condominiumSlug]/budget/[year]/edit/page.tsx`:
+- [x] Create `app/app/[condominiumSlug]/budget/[year]/edit/page.tsx`:
   - Admin-only; redirect non-admins
-  - If no draft exists for the year, show "Create budget" button
+  - If no plan exists for the year, show "Create budget" button
   - If draft exists: editable line items table
   - Add/remove/reorder line items inline
-  - Save as draft (auto-save or manual save button)
+  - Manual save draft button
   - Publish button (with confirmation dialog) — sets status to 'published', records published_at
-  - Cannot edit a published budget (show read-only view with "Edit" button disabled)
-- [ ] Server actions in `budget/actions.ts`:
-  - `createBudgetPlan(year)` — creates a draft
-  - `saveBudgetDraft(planId, lineItems[])` — upserts line items
-  - `publishBudget(planId)` — sets status to published; validates at least one line item exists
-  - `addLineItem(planId)` — adds empty line item
-  - `deleteLineItem(lineItemId)`
+  - Cannot edit a published budget (show locked view with link back to read view)
+- [x] `components/budget/budget-editor.tsx` — client component for interactive editing
+- [x] Server actions in `app/app/[condominiumSlug]/budget/actions.ts`:
+  - `createBudgetPlan(condominiumSlug, year)` — creates a draft
+  - `saveBudgetDraft(condominiumSlug, planId, year, lineItems[])` — replaces line items
+  - `publishBudget(condominiumSlug, planId, year)` — validates ≥1 item, sets published
 
 ### Navigation
-- [ ] From dashboard, "Yearly Budget" card links to `/budget/[currentYear]`
-- [ ] Admin sees an "Edit Budget" button on the read-only view
+- [x] Dashboard "Yearly Budget" card links to `/budget/[currentYear]` (already wired in F05)
+- [x] Admin sees "Edit Budget" / "Create Budget" button on the read-only view
+
+---
+
+## Database Migrations
+
+- `supabase/migrations/20260228000004_budget.sql` — budget_plans + budget_line_items tables with RLS
 
 ---
 
@@ -69,5 +74,5 @@ One published budget per year per condominium. Structured as line items (categor
 ## Notes
 
 - `year` in the URL is the calendar year (e.g. 2025, 2026)
-- There can be at most one published budget per year per condominium; the DB should have a unique constraint on (condominium_id, year, status) where status = 'published'
-- Consider adding a `currency` field to `budget_plans` for future i18n support (out of scope v1, but easy to add now)
+- Unique constraint on `(condominium_id, year)` — one plan per year per condominium
+- Line items are replaced in bulk on each save (delete + insert) for simplicity

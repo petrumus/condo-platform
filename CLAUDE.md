@@ -45,7 +45,8 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000000_base_schema.sql
 │   ├── 20260228000001_invitations.sql
 │   ├── 20260228000002_condominium_helpers.sql
-│   └── 20260228000003_profiles.sql      ← profiles table + sync trigger (F04)
+│   ├── 20260228000003_profiles.sql      ← profiles table + sync trigger (F04)
+│   └── 20260228000004_budget.sql        ← budget_plans + budget_line_items (F06)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
@@ -60,6 +61,10 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── layout.tsx               ← Tenant layout (navbar, context provider)
 │   │   ├── page.tsx                 ← Slug root redirect → dashboard
 │   └── dashboard/page.tsx       ← Dashboard (condominium header, nav cards, activity feed)
+│       ├── budget/
+│       │   ├── actions.ts               ← Budget server actions (F06)
+│       │   ├── [year]/page.tsx          ← Budget read view (F06)
+│       │   └── [year]/edit/page.tsx     ← Budget editor, admin only (F06)
 │   ├── invite/[token]/
 │   │   ├── page.tsx                 ← Invitation acceptance page
 │   │   └── actions.ts               ← Accept invitation server action
@@ -82,6 +87,10 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 ├── components/
 │   ├── logo.tsx                     ← SVG logo component
 │   ├── layout/navbar.tsx            ← Top navigation bar
+│   ├── budget/
+│   │   ├── budget-table.tsx         ← Read-only budget line items table (F06)
+│   │   ├── budget-editor.tsx        ← Interactive budget editor client component (F06)
+│   │   └── year-selector.tsx        ← Year navigation for budgets (F06)
 │   ├── dashboard/
 │   │   ├── nav-card.tsx             ← Navigation card (icon + title + description)
 │   │   └── activity-feed.tsx        ← Recent activity feed (announcements, ballots, initiatives)
@@ -283,7 +292,7 @@ When a feature branch is complete:
 | F03 | Multi-tenancy & Condominium Workspace | `completed` | `claude/build-multitenancy-condominium-sVQC8` |
 | F04 | User Roles & Members Management | `completed` | `claude/feature-user-roles-members` |
 | F05 | Dashboard / Home Page | `completed` | `claude/build-fifth-feature-F8aWs` |
-| F06 | Yearly Budget Plan | `pending` | — |
+| F06 | Yearly Budget Plan | `completed` | `claude/build-yearly-budget-plan-nypk2` |
 | F07 | Projects | `pending` | — |
 | F08 | Condominium Administration Page | `pending` | — |
 | F09 | Initiatives | `pending` | — |
@@ -316,3 +325,4 @@ When a feature branch is complete:
 | 2026-02-28 | F04 User Roles & Members Management started on `claude/feature-user-roles-members`: admin guards, members page, invite form, pending invitations, functional titles CRUD, profiles migration |
 | 2026-02-28 | F05 Dashboard / Home Page started on `claude/build-fifth-feature-F8aWs`: NavCard component, ActivityFeed component, full dashboard page (condominium header, 8-card nav grid, recent activity), slug-root redirect, condominium picker page, middleware multi-membership redirect |
 | 2026-02-28 | Fix: middleware post-login redirect now checks super-admin role first and routes to `/super-admin/condominiums`, preventing super-admins with no memberships from landing on `/pending` |
+| 2026-02-28 | F06 Yearly Budget Plan completed on `claude/build-yearly-budget-plan-nypk2`: migration for budget_plans + budget_line_items with RLS, read view with year selector, admin-only editor with inline add/remove/reorder, publish confirmation dialog, server actions |
