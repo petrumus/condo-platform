@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createServiceClient } from "@/lib/supabase/server"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ interface PageProps {
 
 export default async function AuditLogPage({ searchParams }: PageProps) {
   const { condo_id, action, from, to } = await searchParams
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   // Fetch condominiums for filter dropdown
   const { data: condominiums } = await supabase

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { createClient } from "@/lib/supabase/server"
+import { createServiceClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -17,7 +17,7 @@ type CondominiumRow = Tables<"condominiums"> & {
 
 export default async function CondominiumsPage({ searchParams }: PageProps) {
   const { q } = await searchParams
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   let query = supabase
     .from("condominiums")

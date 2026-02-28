@@ -40,6 +40,24 @@ create policy "Admins can view their condominium audit logs"
     and public.is_admin(condominium_id)
   );
 
+-- ─── condominiums: super-admin bypass ─────────────────────────────────────────
+
+drop policy if exists "Super-admins have full access to condominiums" on public.condominiums;
+
+create policy "Super-admins have full access to condominiums"
+  on public.condominiums for all
+  using (public.is_super_admin())
+  with check (public.is_super_admin());
+
+-- ─── condominium_members: super-admin bypass ──────────────────────────────────
+
+drop policy if exists "Super-admins have full access to condominium_members" on public.condominium_members;
+
+create policy "Super-admins have full access to condominium_members"
+  on public.condominium_members for all
+  using (public.is_super_admin())
+  with check (public.is_super_admin());
+
 -- ─── profiles: super-admin bypass ─────────────────────────────────────────────
 -- Drop first to avoid "already exists" error if applied more than once.
 
