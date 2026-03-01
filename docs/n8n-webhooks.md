@@ -5,13 +5,15 @@
 > Each section documents one n8n workflow. The workflow is triggered by posting to:
 > `POST https://<N8N_HOST>/webhook/<workflow-name>`
 >
-> The Supabase Edge Function `supabase/functions/trigger-n8n-webhook/index.ts` is the generic
-> caller. It accepts `{ workflow, payload }` and forwards the payload to the correct n8n URL with
-> a shared secret in the `X-Webhook-Secret` header.
+> `lib/n8n/trigger-webhook.ts` is the generic caller. It POSTs the payload directly to n8n
+> with a shared secret in the `X-Webhook-Secret` header. Called from Next.js server actions.
 
 ---
 
 ## Environment Variables
+
+Set these in `.env.local` (local dev) and Vercel project settings (production).
+They are server-side only — do NOT prefix with `NEXT_PUBLIC_`.
 
 | Variable              | Description                                            |
 |-----------------------|--------------------------------------------------------|
@@ -184,26 +186,16 @@ Triggered when an admin publishes a new announcement.
 
 ---
 
-## Calling the Edge Function from Server Actions
+## Calling the Webhook from Server Actions
 
 ```typescript
-// Example: trigger n8n webhook from a Next.js server action
-async function triggerN8nWebhook(workflow: string, payload: Record<string, unknown>) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!supabaseUrl || !serviceKey) return // silently skip if not configured
+// lib/n8n/trigger-webhook.ts — used by all server actions that send email
+import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
-  try {
-    await fetch(`${supabaseUrl}/functions/v1/trigger-n8n-webhook`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${serviceKey}`,
-      },
-      body: JSON.stringify({ workflow, payload }),
-    })
-  } catch {
-    // Non-critical — email failures should not break the main action
-  }
-}
+// Fire-and-forget — errors are logged but do not propagate
+void triggerN8nWebhook("invitation", {
+  email: "user@example.com",
+  invite_url: "https://app.example.com/invite/<token>",
+  condominium_name: "Sunset Tower",
+})
 ```
