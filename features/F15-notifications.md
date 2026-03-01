@@ -70,7 +70,7 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
   - `ballot_results` — { condominium_id, ballot_title, results_url }
   - `maintenance_status` — { user_email, request_title, new_status }
   - `announcement` — { condominium_id, announcement_title, announcement_url }
-- [x] `lib/n8n/trigger-webhook.ts` — calls n8n directly (POST to `N8N_WEBHOOK_BASE_URL/webhook/<workflow>` with `X-Webhook-Secret` header); errors are logged, not swallowed
+- [x] `lib/n8n/trigger-webhook.ts` — calls n8n directly (POST to `N8N_WEBHOOK_BASE_URL/webhook/<workflow>` with `X-Webhook-Secret` header); errors are logged not swallowed; trailing slash stripped from base URL; all calls `await`ed (required for Vercel serverless)
 - [x] Fire-and-forget webhook calls wired into server actions: announcements, ballots, initiatives, maintenance, invitations
 - [x] Env vars required: `N8N_WEBHOOK_BASE_URL`, `N8N_WEBHOOK_SECRET` (server-side only, set in `.env.local` + Vercel)
 - [x] `supabase/functions/trigger-n8n-webhook/index.ts` — kept in repo but NOT used; direct call approach replaced it (2026-03-01 hotfix)
