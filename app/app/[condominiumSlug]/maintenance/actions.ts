@@ -10,15 +10,7 @@ import { createNotification } from "@/lib/notifications/create-notification"
 import { logAction } from "@/lib/audit/log-action"
 import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
-export const MAINTENANCE_CATEGORIES = [
-  "Plumbing",
-  "Electrical",
-  "Common Areas",
-  "Elevator",
-  "Other",
-] as const
-
-export type MaintenanceCategory = (typeof MAINTENANCE_CATEGORIES)[number]
+export type { MaintenanceCategory } from "@/lib/constants/domain-constants"
 
 export type MaintenancePriority = "low" | "medium" | "high"
 export type MaintenanceStatus =

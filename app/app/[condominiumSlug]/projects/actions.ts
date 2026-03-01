@@ -15,29 +15,6 @@ export type ProjectStatus =
   | "completed"
   | "archived"
 
-export type ProjectCategory =
-  | "Infrastructure"
-  | "Landscaping"
-  | "Legal"
-  | "Administrative"
-  | "Other"
-
-export const PROJECT_CATEGORIES: ProjectCategory[] = [
-  "Infrastructure",
-  "Landscaping",
-  "Legal",
-  "Administrative",
-  "Other",
-]
-
-export const PROJECT_STATUSES: { value: ProjectStatus; label: string }[] = [
-  { value: "proposed", label: "Proposed" },
-  { value: "approved", label: "Approved" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "completed", label: "Completed" },
-  { value: "archived", label: "Archived" },
-]
-
 // Valid status transitions: from → allowed next statuses
 const VALID_TRANSITIONS: Record<ProjectStatus, ProjectStatus[]> = {
   proposed: ["approved"],

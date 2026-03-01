@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { INITIATIVE_CATEGORIES } from "@/lib/constants/domain-constants"
 import {
-  INITIATIVE_CATEGORIES,
   submitInitiative,
   type InitiativeFormData,
 } from "@/app/app/[condominiumSlug]/initiatives/actions"

@@ -14,9 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { PROJECT_CATEGORIES, PROJECT_STATUSES } from "@/lib/constants/domain-constants"
 import {
-  PROJECT_CATEGORIES,
-  PROJECT_STATUSES,
   createProject,
   updateProject,
   type ProjectFormData,

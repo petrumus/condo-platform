@@ -14,10 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  MAINTENANCE_CATEGORIES,
-  submitMaintenanceRequest,
-} from "@/app/app/[condominiumSlug]/maintenance/actions"
+import { MAINTENANCE_CATEGORIES } from "@/lib/constants/domain-constants"
+import { submitMaintenanceRequest } from "@/app/app/[condominiumSlug]/maintenance/actions"
 
 interface MaintenanceRequestFormProps {
   condominiumSlug: string

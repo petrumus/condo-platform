@@ -17,16 +17,6 @@ export type InitiativeStatus =
   | "rejected"
   | "converted"
 
-export const INITIATIVE_CATEGORIES = [
-  "Infrastructure",
-  "Amenities",
-  "Safety",
-  "Environment",
-  "Community",
-  "Administrative",
-  "Other",
-] as const
-
 export interface InitiativeFormData {
   title: string
   description: string
