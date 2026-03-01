@@ -176,7 +176,7 @@ export async function openBallot(
 
     // Fire-and-forget email via n8n
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-    void triggerN8nWebhook("ballot_open", {
+    await triggerN8nWebhook("ballot_open", {
       condominium_id: condominium.id,
       ballot_title: ballot.title,
       close_at: ballot.close_at,
@@ -258,7 +258,7 @@ export async function publishResults(
 
     // Fire-and-forget email via n8n
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-    void triggerN8nWebhook("ballot_results", {
+    await triggerN8nWebhook("ballot_results", {
       condominium_id: condominium.id,
       ballot_title: ballot.title,
       results_url: `${siteUrl}/app/${condominiumSlug}/ballots/${ballotId}/results`,

@@ -192,8 +192,8 @@ Triggered when an admin publishes a new announcement.
 // lib/n8n/trigger-webhook.ts — used by all server actions that send email
 import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
-// Fire-and-forget — errors are logged but do not propagate
-void triggerN8nWebhook("invitation", {
+// Must be awaited — Vercel terminates serverless functions after response is sent
+await triggerN8nWebhook("invitation", {
   email: "user@example.com",
   invite_url: "https://app.example.com/invite/<token>",
   condominium_name: "Sunset Tower",

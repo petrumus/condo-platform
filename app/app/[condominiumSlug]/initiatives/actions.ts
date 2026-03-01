@@ -123,7 +123,7 @@ export async function approveInitiative(
       .eq("id", initiative.submitter_id)
       .single()
     if (profile?.email) {
-      void triggerN8nWebhook("initiative_status", {
+      await triggerN8nWebhook("initiative_status", {
         user_email: profile.email,
         initiative_title: initiative.title,
         new_status: "approved",
@@ -188,7 +188,7 @@ export async function rejectInitiative(
       .eq("id", initiative.submitter_id)
       .single()
     if (profile?.email) {
-      void triggerN8nWebhook("initiative_status", {
+      await triggerN8nWebhook("initiative_status", {
         user_email: profile.email,
         initiative_title: initiative.title,
         new_status: "rejected",

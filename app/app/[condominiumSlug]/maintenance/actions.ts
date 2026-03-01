@@ -206,7 +206,7 @@ export async function updateRequestStatus(
       .eq("id", request.submitter_id)
       .single()
     if (profile?.email) {
-      void triggerN8nWebhook("maintenance_status", {
+      await triggerN8nWebhook("maintenance_status", {
         user_email: profile.email,
         request_title: request.title,
         new_status: newStatus,

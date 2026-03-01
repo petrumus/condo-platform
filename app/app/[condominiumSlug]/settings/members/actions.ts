@@ -166,7 +166,7 @@ export async function inviteMember(
   // Fire-and-forget invitation email via n8n
   if (invitation) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-    void triggerN8nWebhook("invitation", {
+    await triggerN8nWebhook("invitation", {
       email: email.toLowerCase(),
       invite_url: `${siteUrl}/invite/${invitation.token}`,
       condominium_name: condominium.name,

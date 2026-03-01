@@ -142,7 +142,7 @@ export async function publishAnnouncement(
 
   // Fire-and-forget email via n8n
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-  void triggerN8nWebhook("announcement", {
+  await triggerN8nWebhook("announcement", {
     condominium_id: condominium.id,
     announcement_title: title,
     announcement_url: `${siteUrl}/app/${condominiumSlug}/announcements/${announcement.id}`,
