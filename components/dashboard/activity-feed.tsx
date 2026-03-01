@@ -1,5 +1,8 @@
+"use client"
+
 import Link from "next/link"
 import { Megaphone, Vote, Lightbulb } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface ActivityItem {
   id: string
@@ -20,17 +23,13 @@ const ICONS = {
   initiative: Lightbulb,
 } as const
 
-const TYPE_LABELS = {
-  announcement: "Announcement",
-  ballot: "Open ballot",
-  initiative: "Approved initiative",
-} as const
-
 export function ActivityFeed({ items }: ActivityFeedProps) {
+  const t = useTranslations("dashboard")
+
   if (items.length === 0) {
     return (
       <div className="rounded-lg border border-dashed p-8 text-center">
-        <p className="text-sm text-muted-foreground">No recent activity to show.</p>
+        <p className="text-sm text-muted-foreground">{t("noActivity")}</p>
       </div>
     )
   }
@@ -39,6 +38,7 @@ export function ActivityFeed({ items }: ActivityFeedProps) {
     <ul className="space-y-2">
       {items.map((item) => {
         const Icon = ICONS[item.type]
+        const typeLabel = t(`activityTypes.${item.type}`)
         return (
           <li key={item.id}>
             <Link
@@ -51,7 +51,7 @@ export function ActivityFeed({ items }: ActivityFeedProps) {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium truncate">{item.title}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {TYPE_LABELS[item.type]} · {item.meta}
+                  {typeLabel} · {item.meta}
                 </p>
               </div>
             </Link>

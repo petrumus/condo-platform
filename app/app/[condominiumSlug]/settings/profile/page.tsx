@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProfileForm } from "./profile-form"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 interface PageProps {
   params: Promise<{ condominiumSlug: string }>
@@ -29,21 +31,20 @@ export default async function ProfilePage({ params }: PageProps) {
     .eq("id", user.id)
     .single()
 
+  const t = await getTranslations("settings.profile")
+
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold">Profile</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Manage your display name and profile photo.
+          {t("subtitle")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Personal Information</CardTitle>
-          <CardDescription>
-            Your display name and photo are visible to other members of this condominium.
-          </CardDescription>
+          <CardTitle className="text-base">{t("displayNameLabel")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ProfileForm
@@ -53,6 +54,16 @@ export default async function ProfilePage({ params }: PageProps) {
             }}
             userEmail={user.email ?? ""}
           />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t("languageLabel")}</CardTitle>
+          <CardDescription>{t("languageDesc")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LanguageSwitcher />
         </CardContent>
       </Card>
     </div>

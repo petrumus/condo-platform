@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { signInWithGoogle } from "@/app/auth/actions"
 import { getUser } from "@/lib/auth/get-user"
 import { getUserMemberships } from "@/lib/auth/get-membership"
@@ -24,6 +25,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   }
 
   const { error, next } = await searchParams
+  const t = await getTranslations("login")
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
@@ -33,10 +35,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <Logo className="h-14 w-14" />
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              Condo Platform
+              {t("title")}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Sign in to manage your condominium
+              {t("subtitle")}
             </p>
           </div>
         </div>
@@ -70,29 +72,29 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   fill="#EA4335"
                 />
               </svg>
-              Sign in with Google
+              {t("signInGoogle")}
             </Button>
           </form>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            You&apos;ll be redirected to Google to complete sign in.
+            {t("redirect")}
           </p>
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Don&apos;t have an account?{" "}
+          {t("noAccount")}{" "}
           <span className="font-medium text-foreground">
-            Contact your condominium administrator.
+            {t("contactAdmin")}
           </span>
         </p>
 
         <p className="mt-4 text-center text-xs text-muted-foreground">
           <a href="/privacy" className="underline hover:text-foreground">
-            Privacy Policy
+            {t("privacy")}
           </a>
           {" · "}
           <a href="/terms" className="underline hover:text-foreground">
-            Terms of Service
+            {t("terms")}
           </a>
         </p>
       </div>

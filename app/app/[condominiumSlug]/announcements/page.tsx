@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { Plus } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
@@ -26,6 +27,7 @@ export default async function AnnouncementsPage({ params }: PageProps) {
 
   const isAdmin = role === "admin"
   const supabase = await createClient()
+  const t = await getTranslations("announcements")
 
   const { data: announcements } = await supabase
     .from("announcements")
@@ -45,14 +47,14 @@ export default async function AnnouncementsPage({ params }: PageProps) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold">Announcements</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground mt-1">{condominium.name}</p>
         </div>
         {isAdmin && (
           <Button asChild size="sm">
             <Link href={`${base}/announcements/new`}>
               <Plus className="h-4 w-4 mr-1.5" />
-              New Announcement
+              {t("new")}
             </Link>
           </Button>
         )}
@@ -61,14 +63,14 @@ export default async function AnnouncementsPage({ params }: PageProps) {
       {/* Empty state */}
       {(!announcements || announcements.length === 0) && (
         <div className="text-center py-16 text-muted-foreground">
-          <p className="text-sm">No announcements yet.</p>
+          <p className="text-sm">{t("empty")}</p>
           {isAdmin && (
             <p className="text-sm mt-1">
               <Link
                 href={`${base}/announcements/new`}
                 className="underline underline-offset-4 hover:text-foreground"
               >
-                Publish the first one
+                {t("publishFirst")}
               </Link>
             </p>
           )}
@@ -79,7 +81,7 @@ export default async function AnnouncementsPage({ params }: PageProps) {
       {pinned.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Pinned
+            {t("pinned")}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {pinned.map((a) => (
@@ -98,7 +100,7 @@ export default async function AnnouncementsPage({ params }: PageProps) {
         <section className="space-y-3">
           {pinned.length > 0 && (
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              All Announcements
+              {t("allAnnouncements")}
             </h2>
           )}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
