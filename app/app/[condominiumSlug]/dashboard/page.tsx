@@ -8,6 +8,7 @@ import {
   Vote,
   Wrench,
 } from "lucide-react"
+import { getTranslations, getLocale } from "next-intl/server"
 import { createClient } from "@/lib/supabase/server"
 import { getCondominium } from "@/lib/condominium/get-condominium"
 import { NavCard } from "@/components/dashboard/nav-card"
@@ -24,6 +25,11 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const condominium = await getCondominium(condominiumSlug)
   if (!condominium) notFound()
 
+  const [t, locale] = await Promise.all([
+    getTranslations("dashboard"),
+    getLocale(),
+  ])
+
   const base = `/app/${condominiumSlug}`
   const currentYear = new Date().getFullYear()
 
@@ -31,50 +37,50 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     {
       href: `${base}/budget/${currentYear}`,
       icon: BarChart3,
-      title: "Yearly Budget Plan",
-      description: "View and manage the annual budget",
+      title: t("cards.budgetTitle"),
+      description: t("cards.budgetDesc"),
     },
     {
       href: `${base}/projects`,
       icon: Briefcase,
-      title: "Projects",
-      description: "Track ongoing and completed projects",
+      title: t("cards.projectsTitle"),
+      description: t("cards.projectsDesc"),
     },
     {
       href: `${base}/administration`,
       icon: Building2,
-      title: "Administration",
-      description: "Members, titles, and units",
+      title: t("cards.administrationTitle"),
+      description: t("cards.administrationDesc"),
     },
     {
       href: `${base}/documents`,
       icon: FileText,
-      title: "Documents",
-      description: "Shared files and document folders",
+      title: t("cards.documentsTitle"),
+      description: t("cards.documentsDesc"),
     },
     {
       href: `${base}/initiatives`,
       icon: Lightbulb,
-      title: "Initiatives",
-      description: "Submit and review resident initiatives",
+      title: t("cards.initiativesTitle"),
+      description: t("cards.initiativesDesc"),
     },
     {
       href: `${base}/ballots`,
       icon: Vote,
-      title: "Ballots & Voting",
-      description: "Active and past voting sessions",
+      title: t("cards.ballotsTitle"),
+      description: t("cards.ballotsDesc"),
     },
     {
       href: `${base}/maintenance`,
       icon: Wrench,
-      title: "Maintenance Requests",
-      description: "Report and track maintenance issues",
+      title: t("cards.maintenanceTitle"),
+      description: t("cards.maintenanceDesc"),
     },
     {
       href: `${base}/announcements`,
       icon: Megaphone,
-      title: "Announcements",
-      description: "Latest news and notices",
+      title: t("cards.announcementsTitle"),
+      description: t("cards.announcementsDesc"),
     },
   ]
 
@@ -114,6 +120,16 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     href: string
   }
 
+  const dateLocale = locale === "ru" ? "ru-RU" : "ro-RO"
+
+  function formatDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString(dateLocale, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+  }
+
   const activityItems: ActivityItem[] = []
 
   for (const row of announcementsResult.data ?? []) {
@@ -131,7 +147,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       id: `ballot-${row.id}`,
       type: "ballot",
       title: row.title,
-      meta: `Closes ${formatDate(row.close_at)}`,
+      meta: t("closes", { date: formatDate(row.close_at) }),
       href: `${base}/ballots/${row.id}`,
     })
   }
@@ -187,7 +203,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {/* Navigation card grid */}
       <section>
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-          Sections
+          {t("sections")}
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {navCards.map((card) => (
@@ -199,18 +215,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {/* Recent activity */}
       <section>
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-          Recent Activity
+          {t("recentActivity")}
         </h2>
         <ActivityFeed items={activityItems} condominiumSlug={condominiumSlug} />
       </section>
     </div>
   )
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })
 }

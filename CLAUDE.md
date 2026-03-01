@@ -33,6 +33,11 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 /
 ├── CLAUDE.md                        ← This file (project guide & progress tracker)
 ├── middleware.ts                     ← Next.js middleware (Supabase session refresh)
+├── i18n/
+│   └── request.ts                   ← next-intl server config (reads NEXT_LOCALE cookie) (F19)
+├── messages/
+│   ├── ro.json                      ← Romanian translations (~215 keys, default locale) (F19)
+│   └── ru.json                      ← Russian translations (same key structure) (F19)
 ├── docs/
 │   ├── condominium-platform-spec.md ← Full product specification
 │   └── n8n-webhooks.md              ← n8n webhook payload reference (added in F15)
@@ -57,12 +62,15 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   ├── 20260228000012_units.sql        ← units + unit_owners tables with RLS (F14)
 │   ├── 20260228000013_notifications.sql ← notifications table with RLS + realtime (F15)
 │   ├── 20260301000000_fix_rls_recursion.sql ← is_member() SECURITY DEFINER + fix self-referencing RLS policies (hotfix)
-│   └── 20260301000001_members_profiles_fk.sql ← FK condominium_members.user_id → profiles.id for PostgREST embed (hotfix)
+│   ├── 20260301000001_members_profiles_fk.sql ← FK condominium_members.user_id → profiles.id for PostgREST embed (hotfix)
+│   └── 20260302000000_locale_preference.sql ← preferred_locale column on profiles (F19)
 ├── app/                             ← Next.js App Router
 │   ├── layout.tsx                   ← Root layout (Geist fonts, Analytics)
 │   ├── page.tsx                     ← Login page (Google OAuth)
 │   ├── global-error.tsx             ← Global error boundary (fallback for uncaught errors)
 │   ├── globals.css
+│   ├── actions/
+│   │   └── set-locale.ts            ← Server action: set NEXT_LOCALE cookie + sync DB (F19)
 │   ├── app/
 │   │   └── page.tsx                 ← Condominium picker (for users with multiple memberships)
 │   ├── auth/
@@ -179,6 +187,7 @@ A multi-tenant SaaS platform for condominium management. Each condominium is an 
 │   │   ├── delete-attachment-button.tsx  ← Per-attachment delete dialog (F12)
 │   │   └── attachment-download-button.tsx ← Signed URL download button (F12)
 │   ├── logo.tsx                     ← SVG logo component
+│   ├── language-switcher.tsx        ← Globe icon dropdown (Română / Русский) (F19)
 │   ├── layout/navbar.tsx            ← Top navigation bar
 │   ├── administration/
 │   │   ├── governance-member-card.tsx ← Avatar + name + title + email card (F08)
@@ -444,6 +453,7 @@ When a feature branch is complete:
 | F16 | Audit Log | `completed` | `claude/build-audit-log-feature-Q6L7e` |
 | F17 | Super Admin Panel | `completed` | `claude/build-super-admin-panel-INiZo` |
 | F18 | Settings Pages | `completed` | `claude/build-claude-settings-pages-BCKrF` |
+| F19 | Multi-Language Support (ro + ru) | `in_progress` | `claude/multi-language-support-plan-SA1ca` |
 
 ---
 
@@ -484,3 +494,4 @@ When a feature branch is complete:
 | 2026-03-01 | Hotfix: super-admin detail page showed Members (0). Root cause: PostgREST could not resolve `profiles()` embed from `condominium_members` because `user_id` referenced `auth.users(id)` but not `profiles(id)` directly. Fix: added FK `condominium_members.user_id → profiles.id` (migration `20260301000001_members_profiles_fk.sql`). |
 | 2026-03-01 | Hotfix: `/budget` route returned 404. Root cause: only `/budget/[year]` existed, no index page. Fix: added `app/app/[condominiumSlug]/budget/page.tsx` that redirects to current year. |
 | 2026-03-01 | Hotfix: "u.map is not a function" on `/projects/new`, `/maintenance/new`, `/initiatives/new`. Root cause: `PROJECT_CATEGORIES`, `PROJECT_STATUSES`, `MAINTENANCE_CATEGORIES`, `INITIATIVE_CATEGORIES` were exported from `"use server"` action files — non-function exports are `undefined` in client components. Fix: extracted all constants to `lib/constants/domain-constants.ts` and updated client component imports. |
+| 2026-03-01 | F19 Multi-Language Support started on `claude/multi-language-support-plan-SA1ca`: installed next-intl v4, cookie-based locale (NEXT_LOCALE, default ro), Romanian + Russian translation files (~215 keys across 22 namespaces), language switcher component in navbar + profile page, setLocale server action (cookie + DB sync), DB migration for profiles.preferred_locale (applied manually via Supabase Dashboard), translated 15 files (login, pending, suspended, picker, invite, dashboard, announcements list, projects list, profile settings, navbar, settings-nav, activity-feed, notification-bell, root layout). ~60 files still need translation — see `features/F19-multi-language.md` for full checklist. |

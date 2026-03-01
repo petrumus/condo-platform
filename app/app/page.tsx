@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getUserMemberships } from "@/lib/auth/get-membership"
 import { Card, CardContent } from "@/components/ui/card"
@@ -21,14 +22,16 @@ export default async function CondominiumPickerPage() {
     if (slug) redirect(`/app/${slug}/dashboard`)
   }
 
+  const t = await getTranslations("picker")
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-2">
-          Choose a workspace
+          {t("title")}
         </h1>
         <p className="text-sm text-muted-foreground text-center mb-6">
-          You are a member of multiple condominiums. Select one to continue.
+          {t("subtitle")}
         </p>
         <ul className="space-y-2">
           {memberships.map((membership) => {

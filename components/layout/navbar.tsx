@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { ChevronDown, LogOut, Settings, User } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 import { useCondominium } from "@/lib/context/condominium-context"
 import { Button } from "@/components/ui/button"
@@ -16,18 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { NotificationBell } from "@/components/notifications/notification-bell"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
-
-const NAV_LINKS = [
-  { label: "Dashboard",     href: "dashboard" },
-  { label: "Budget",        href: "budget" },
-  { label: "Projects",      href: "projects" },
-  { label: "Initiatives",   href: "initiatives" },
-  { label: "Ballots",       href: "ballots" },
-  { label: "Documents",     href: "documents" },
-  { label: "Announcements", href: "announcements" },
-  { label: "Maintenance",   href: "maintenance" },
-] as const
 
 interface NavbarProps {
   user: SupabaseUser
@@ -38,8 +29,20 @@ export function Navbar({ user }: NavbarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  const t = useTranslations("nav")
 
   const baseHref = `/app/${condominium.slug}`
+
+  const NAV_LINKS = [
+    { label: t("dashboard"),     href: "dashboard" },
+    { label: t("budget"),        href: "budget" },
+    { label: t("projects"),      href: "projects" },
+    { label: t("initiatives"),   href: "initiatives" },
+    { label: t("ballots"),       href: "ballots" },
+    { label: t("documents"),     href: "documents" },
+    { label: t("announcements"), href: "announcements" },
+    { label: t("maintenance"),   href: "maintenance" },
+  ] as const
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -101,6 +104,9 @@ export function Navbar({ user }: NavbarProps) {
 
         {/* Right-side actions */}
         <div className="flex items-center gap-1 shrink-0">
+          {/* Language switcher */}
+          <LanguageSwitcher />
+
           {/* Notification bell */}
           <NotificationBell
             userId={user.id}
@@ -128,14 +134,14 @@ export function Navbar({ user }: NavbarProps) {
               <DropdownMenuItem asChild>
                 <Link href={`${baseHref}/settings/profile`} className="flex items-center gap-2">
                   <User className="h-4 w-4" />
-                  Profile
+                  {t("profile")}
                 </Link>
               </DropdownMenuItem>
               {userRole === "admin" && (
                 <DropdownMenuItem asChild>
                   <Link href={`${baseHref}/settings/general`} className="flex items-center gap-2">
                     <Settings className="h-4 w-4" />
-                    Settings
+                    {t("settings")}
                   </Link>
                 </DropdownMenuItem>
               )}
@@ -145,7 +151,7 @@ export function Navbar({ user }: NavbarProps) {
                 className="flex items-center gap-2 text-destructive focus:text-destructive"
               >
                 <LogOut className="h-4 w-4" />
-                Sign out
+                {t("signOut")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

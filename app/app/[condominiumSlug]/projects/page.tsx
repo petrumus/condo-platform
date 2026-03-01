@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { Plus } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { createClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { getCondominium } from "@/lib/condominium/get-condominium"
@@ -14,13 +15,13 @@ interface PageProps {
   searchParams: Promise<{ status?: string }>
 }
 
-const STATUS_TABS: { value: ProjectStatus | "all"; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "proposed", label: "Proposed" },
-  { value: "approved", label: "Approved" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "completed", label: "Completed" },
-  { value: "archived", label: "Archived" },
+const STATUS_VALUES: (ProjectStatus | "all")[] = [
+  "all",
+  "proposed",
+  "approved",
+  "in_progress",
+  "completed",
+  "archived",
 ]
 
 const USER_VISIBLE_STATUSES: ProjectStatus[] = [
@@ -45,10 +46,20 @@ export default async function ProjectsPage({ params, searchParams }: PageProps) 
 
   const isAdmin = role === "admin"
   const supabase = await createClient()
+  const t = await getTranslations("projects")
+
+  const STATUS_TABS: { value: ProjectStatus | "all"; label: string }[] = [
+    { value: "all",         label: t("tabs.all") },
+    { value: "proposed",    label: t("tabs.proposed") },
+    { value: "approved",    label: t("tabs.approved") },
+    { value: "in_progress", label: t("tabs.in_progress") },
+    { value: "completed",   label: t("tabs.completed") },
+    { value: "archived",    label: t("tabs.archived") },
+  ]
 
   // Admins see all statuses; regular users only see approved+
   const visibleStatuses = isAdmin
-    ? STATUS_TABS.map((t) => t.value).filter((v) => v !== "all")
+    ? STATUS_VALUES.filter((v) => v !== "all")
     : USER_VISIBLE_STATUSES
 
   let query = supabase
@@ -74,7 +85,7 @@ export default async function ProjectsPage({ params, searchParams }: PageProps) 
   const tabs = isAdmin
     ? STATUS_TABS
     : STATUS_TABS.filter(
-        (t) => t.value === "all" || USER_VISIBLE_STATUSES.includes(t.value as ProjectStatus)
+        (tab) => tab.value === "all" || USER_VISIBLE_STATUSES.includes(tab.value as ProjectStatus)
       )
 
   return (
@@ -82,14 +93,14 @@ export default async function ProjectsPage({ params, searchParams }: PageProps) 
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold">Projects</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground mt-1">{condominium.name}</p>
         </div>
         {isAdmin && (
           <Button asChild size="sm">
             <Link href={`${base}/projects/new`}>
               <Plus className="h-4 w-4 mr-1.5" />
-              New Project
+              {t("new")}
             </Link>
           </Button>
         )}
@@ -118,14 +129,14 @@ export default async function ProjectsPage({ params, searchParams }: PageProps) 
       {/* Project grid */}
       {!projects || projects.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground">
-          <p className="text-sm">No projects found.</p>
+          <p className="text-sm">{t("empty")}</p>
           {isAdmin && (
             <p className="text-sm mt-1">
               <Link
                 href={`${base}/projects/new`}
                 className="underline underline-offset-4 hover:text-foreground"
               >
-                Create the first project
+                {t("createFirst")}
               </Link>
             </p>
           )}

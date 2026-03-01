@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { createServiceClient } from "@/lib/supabase/server"
 import { getUser } from "@/lib/auth/get-user"
 import { acceptInvitation } from "./actions"
@@ -15,6 +16,8 @@ export default async function InvitePage({ params, searchParams }: InvitePagePro
   const { token } = await params
   const { error } = await searchParams
 
+  const t = await getTranslations("invite")
+
   // Look up the invitation (public, via service client)
   const serviceClient = await createServiceClient()
   const { data: invitation } = await serviceClient
@@ -29,13 +32,13 @@ export default async function InvitePage({ params, searchParams }: InvitePagePro
       <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
         <div className="w-full max-w-sm text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Invalid invitation
+            {t("invalidTitle")}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            This invitation link is invalid or has already been used.
+            {t("invalidDesc")}
           </p>
           <Button variant="outline" className="mt-6" asChild>
-            <Link href="/">Go to sign in</Link>
+            <Link href="/">{t("goSignIn")}</Link>
           </Button>
         </div>
       </div>
@@ -74,11 +77,10 @@ export default async function InvitePage({ params, searchParams }: InvitePagePro
           </div>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              You&apos;re invited
+              {t("title")}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {condo?.name ?? "A condominium"} has invited you to join their
-              platform
+              {t("subtitle", { condoName: condo?.name ?? "A condominium" })}
             </p>
           </div>
         </div>
@@ -89,7 +91,7 @@ export default async function InvitePage({ params, searchParams }: InvitePagePro
             <div className="flex items-center gap-2 text-muted-foreground">
               <UserCheck className="h-4 w-4 shrink-0" />
               <span>
-                Invited as{" "}
+                {t("invitedAs")}{" "}
                 <span className="font-medium capitalize text-foreground">
                   {invitation.role}
                 </span>{" "}
@@ -108,38 +110,31 @@ export default async function InvitePage({ params, searchParams }: InvitePagePro
             // Signed in with matching email — show accept form
             <form action={acceptInvitation.bind(null, token)}>
               <Button type="submit" className="w-full">
-                Accept invitation
+                {t("accept")}
               </Button>
             </form>
           ) : user ? (
             // Signed in with a different email
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                You&apos;re signed in as{" "}
-                <span className="font-medium text-foreground">{user.email}</span>
-                , but this invitation was sent to{" "}
-                <span className="font-medium text-foreground">
-                  {invitation.email}
-                </span>
-                .
+                {t("wrongAccount", {
+                  currentEmail: user.email ?? "",
+                  invitedEmail: invitation.email,
+                })}
               </p>
               <Button variant="outline" className="w-full" asChild>
-                <Link href="/">Sign in with a different account</Link>
+                <Link href="/">{t("signInDifferent")}</Link>
               </Button>
             </div>
           ) : (
             // Not signed in
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                Sign in with Google using{" "}
-                <span className="font-medium text-foreground">
-                  {invitation.email}
-                </span>{" "}
-                to accept this invitation.
+                {t("signInUsing", { email: invitation.email })}
               </p>
               <Button className="w-full" asChild>
                 <Link href={`/?next=${encodeURIComponent(`/invite/${token}`)}`}>
-                  Sign in to accept
+                  {t("signInToAccept")}
                 </Link>
               </Button>
             </div>

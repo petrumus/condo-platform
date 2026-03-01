@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import Link from "next/link"
 import { Bell, Check, CheckCheck, ExternalLink } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useNotifications } from "@/hooks/use-notifications"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,24 +23,28 @@ interface NotificationBellProps {
   condominiumSlug: string
 }
 
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return "just now"
-  if (mins < 60) return `${mins}m ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  const days = Math.floor(hrs / 24)
-  return `${days}d ago`
-}
-
 function NotificationItem({
   notification,
   onRead,
+  markAsReadLabel,
 }: {
   notification: Notification
   onRead: (id: string) => void
+  markAsReadLabel: string
 }) {
+  const t = useTranslations("common")
+
+  function timeAgo(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return t("justNow")
+    if (mins < 60) return t("minutesAgo", { count: mins })
+    const hrs = Math.floor(mins / 60)
+    if (hrs < 24) return t("hoursAgo", { count: hrs })
+    const days = Math.floor(hrs / 24)
+    return t("daysAgo", { count: days })
+  }
+
   return (
     <div
       className={cn(
@@ -73,7 +78,7 @@ function NotificationItem({
             size="icon"
             className="h-6 w-6"
             onClick={() => onRead(notification.id)}
-            title="Mark as read"
+            title={markAsReadLabel}
           >
             <Check className="h-3 w-3" />
           </Button>
@@ -89,6 +94,7 @@ export function NotificationBell({
   condominiumSlug,
 }: NotificationBellProps) {
   const bellRef = useRef<HTMLButtonElement>(null)
+  const t = useTranslations("notifications")
 
   const { notifications, unreadCount, loading, markAsRead, markAllAsRead } = useNotifications({
     userId,
@@ -118,7 +124,7 @@ export function NotificationBell({
           variant="ghost"
           size="icon"
           className="relative"
-          aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
+          aria-label={`${t("title")}${unreadCount > 0 ? ` (${unreadCount})` : ""}`}
         >
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
@@ -132,7 +138,7 @@ export function NotificationBell({
       <DropdownMenuContent align="end" className="w-80 p-0">
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-2 border-b">
-          <span className="text-sm font-semibold">Notifications</span>
+          <span className="text-sm font-semibold">{t("title")}</span>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -141,7 +147,7 @@ export function NotificationBell({
               onClick={markAllAsRead}
             >
               <CheckCheck className="h-3 w-3" />
-              Mark all read
+              {t("markAllRead")}
             </Button>
           )}
         </div>
@@ -149,14 +155,19 @@ export function NotificationBell({
         {/* List */}
         <div className="max-h-96 overflow-y-auto divide-y divide-border">
           {loading ? (
-            <p className="text-sm text-muted-foreground px-3 py-4 text-center">Loading…</p>
+            <p className="text-sm text-muted-foreground px-3 py-4 text-center">{t("loading")}</p>
           ) : recent.length === 0 ? (
             <p className="text-sm text-muted-foreground px-3 py-4 text-center">
-              No notifications yet.
+              {t("empty")}
             </p>
           ) : (
             recent.map((n) => (
-              <NotificationItem key={n.id} notification={n} onRead={markAsRead} />
+              <NotificationItem
+                key={n.id}
+                notification={n}
+                onRead={markAsRead}
+                markAsReadLabel={t("markAsRead")}
+              />
             ))
           )}
         </div>
@@ -168,7 +179,7 @@ export function NotificationBell({
             <div className="px-3 py-2">
               <Button variant="ghost" size="sm" className="w-full text-xs" asChild>
                 <Link href={`/app/${condominiumSlug}/notifications`}>
-                  View all notifications
+                  {t("viewAll")}
                 </Link>
               </Button>
             </div>

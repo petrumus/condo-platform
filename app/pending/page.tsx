@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { signOut } from "@/app/auth/actions"
 import { getUser } from "@/lib/auth/get-user"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,8 @@ export default async function PendingPage() {
     redirect("/")
   }
 
+  const t = await getTranslations("pending")
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
       <div className="w-full max-w-sm text-center">
@@ -21,28 +24,27 @@ export default async function PendingPage() {
         </div>
 
         <h1 className="text-2xl font-semibold tracking-tight">
-          Awaiting access
+          {t("title")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Your account ({user.email}) is set up, but you haven&apos;t been
-          added to a condominium yet.
+          {t("desc", { email: user.email ?? "" })}
         </p>
 
         <div className="mt-6 rounded-xl border bg-card p-4 text-left text-sm text-muted-foreground">
           <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
             <Building2 className="h-4 w-4" />
-            <span>What to do next</span>
+            <span>{t("whatNext")}</span>
           </div>
           <ul className="list-inside list-disc space-y-1">
-            <li>Contact your condominium administrator</li>
-            <li>Ask them to invite you to the platform</li>
-            <li>You&apos;ll receive an invitation email when you&apos;re added</li>
+            <li>{t("contactAdmin")}</li>
+            <li>{t("askInvite")}</li>
+            <li>{t("receiveEmail")}</li>
           </ul>
         </div>
 
         <form action={signOut} className="mt-6">
           <Button variant="outline" className="w-full" type="submit">
-            Sign out
+            {t("signOut")}
           </Button>
         </form>
       </div>

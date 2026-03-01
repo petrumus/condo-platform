@@ -2,15 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
-
-const ADMIN_NAV_ITEMS = [
-  { label: "General", href: "general" },
-  { label: "Members", href: "members" },
-  { label: "Titles", href: "titles" },
-  { label: "Units", href: "units" },
-  { label: "Audit Log", href: "audit-log" },
-]
 
 interface SettingsNavProps {
   condominiumSlug: string
@@ -20,17 +13,28 @@ interface SettingsNavProps {
 export function SettingsNav({ condominiumSlug, isAdmin }: SettingsNavProps) {
   const pathname = usePathname()
   const base = `/app/${condominiumSlug}/settings`
+  const t = useTranslations("settings.nav")
+
+  const ADMIN_NAV_ITEMS = [
+    { label: t("general"),   href: "general" },
+    { label: t("members"),   href: "members" },
+    { label: t("titles"),    href: "titles" },
+    { label: t("units"),     href: "units" },
+    { label: t("auditLog"),  href: "audit-log" },
+  ]
 
   const navItems = [
     ...(isAdmin ? ADMIN_NAV_ITEMS : []),
-    { label: "Profile", href: "profile" },
+    { label: t("profile"), href: "profile" },
   ]
+
+  const tSettings = useTranslations("settings")
 
   return (
     <aside className="w-52 shrink-0 border-r border-border bg-background">
       <div className="sticky top-14 p-4">
         <p className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Settings
+          {tSettings("heading")}
         </p>
         <nav className="space-y-0.5">
           {navItems.map(({ label, href }) => {
