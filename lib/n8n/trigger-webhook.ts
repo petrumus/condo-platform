@@ -15,7 +15,7 @@ export async function triggerN8nWebhook(
     return
   }
 
-  const webhookUrl = `${n8nBaseUrl}/webhook/${workflow}`
+  const webhookUrl = `${n8nBaseUrl.replace(/\/+$/, "")}/webhook/${workflow}`
 
   try {
     const response = await fetch(webhookUrl, {
