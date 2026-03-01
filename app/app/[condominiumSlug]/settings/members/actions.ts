@@ -7,6 +7,7 @@ import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import type { MemberRole } from "@/lib/types"
 import { logAction } from "@/lib/audit/log-action"
+import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
 // ─── Guard helper ─────────────────────────────────────────────────────────────
 
@@ -148,7 +149,7 @@ export async function inviteMember(
       role,
       created_by: user.id,
     })
-    .select("id")
+    .select("id, token")
     .single()
 
   if (error) throw new Error(error.message)
@@ -161,6 +162,16 @@ export async function inviteMember(
     entityId: invitation?.id ?? null,
     metadata: { email: email.toLowerCase(), role },
   })
+
+  // Fire-and-forget invitation email via n8n
+  if (invitation) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+    void triggerN8nWebhook("invitation", {
+      email: email.toLowerCase(),
+      invite_url: `${siteUrl}/invite/${invitation.token}`,
+      condominium_name: condominium.name,
+    })
+  }
 
   revalidatePath(`/app/${condominiumSlug}/settings/members`)
 }

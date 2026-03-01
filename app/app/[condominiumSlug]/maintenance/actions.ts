@@ -8,6 +8,7 @@ import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotification } from "@/lib/notifications/create-notification"
 import { logAction } from "@/lib/audit/log-action"
+import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
 export const MAINTENANCE_CATEGORIES = [
   "Plumbing",
@@ -197,6 +198,20 @@ export async function updateRequestStatus(
       body: `Your request "${request.title}" status changed to ${statusLabels[newStatus]}.`,
       linkUrl: `/app/${condominiumSlug}/maintenance/${requestId}`,
     })
+
+    // Fire-and-forget email via n8n
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("id", request.submitter_id)
+      .single()
+    if (profile?.email) {
+      void triggerN8nWebhook("maintenance_status", {
+        user_email: profile.email,
+        request_title: request.title,
+        new_status: newStatus,
+      })
+    }
   }
 
   await logAction({
