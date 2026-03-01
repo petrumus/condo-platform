@@ -70,12 +70,10 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
   - `ballot_results` — { condominium_id, ballot_title, results_url }
   - `maintenance_status` — { user_email, request_title, new_status }
   - `announcement` — { condominium_id, announcement_title, announcement_url }
-- [x] Created Supabase Edge Function `supabase/functions/trigger-n8n-webhook/index.ts` — generic Deno function that POSTs to `N8N_WEBHOOK_BASE_URL/webhook/<workflow>` with `X-Webhook-Secret` header
-- [x] Edge function deployed: `supabase functions deploy trigger-n8n-webhook`
-- [x] Secrets set: `N8N_WEBHOOK_BASE_URL` and `N8N_WEBHOOK_SECRET`
-- [x] Fire-and-forget webhook calls wired into server actions: announcements, ballots, initiatives, maintenance
-- [x] Env vars documented: `N8N_WEBHOOK_BASE_URL`, `N8N_WEBHOOK_SECRET`
-- [x] Edge function excluded from Next.js TypeScript compilation via `tsconfig.json` exclude
+- [x] `lib/n8n/trigger-webhook.ts` — calls n8n directly (POST to `N8N_WEBHOOK_BASE_URL/webhook/<workflow>` with `X-Webhook-Secret` header); errors are logged, not swallowed
+- [x] Fire-and-forget webhook calls wired into server actions: announcements, ballots, initiatives, maintenance, invitations
+- [x] Env vars required: `N8N_WEBHOOK_BASE_URL`, `N8N_WEBHOOK_SECRET` (server-side only, set in `.env.local` + Vercel)
+- [x] `supabase/functions/trigger-n8n-webhook/index.ts` — kept in repo but NOT used; direct call approach replaced it (2026-03-01 hotfix)
 
 ### Notification Preferences (Optional)
 - [ ] Skipped for now — can be added in F18 Settings Pages
@@ -89,7 +87,7 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
 - [x] Mark as read works for individual and all notifications
 - [x] n8n webhook payload documentation is written
 - [x] Edge function deployed and secrets configured
-- [x] Email notifications firing for: invitations, initiative status, ballot open, ballot results, maintenance status, announcements
+- [x] Email notifications firing for: invitations, initiative status, ballot open, ballot results, maintenance status, announcements (hotfix 2026-03-01: switched from Supabase Edge Function to direct n8n calls)
 
 ---
 
