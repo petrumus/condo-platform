@@ -62,12 +62,6 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
 
 ### n8n Email Workflows
 
-> **TODO (deferred):** The edge function is written but not yet deployed or wired into the server actions.
-> Before enabling email notifications, you must:
-> 1. Deploy the edge function: `supabase functions deploy trigger-n8n-webhook`
-> 2. Set secrets: `supabase secrets set N8N_WEBHOOK_BASE_URL=...` and `supabase secrets set N8N_WEBHOOK_SECRET=...`
-> 3. Add fire-and-forget `fetch` calls to the edge function inside the relevant server actions (announcements, ballots, initiatives, maintenance) following the payloads in `docs/n8n-webhooks.md`
-
 - [x] Documented all webhook payloads in `docs/n8n-webhooks.md`:
   - `invitation` — { email, invite_url, condominium_name }
   - `initiative_status` — { user_email, initiative_title, new_status, rejection_reason? }
@@ -77,6 +71,9 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
   - `maintenance_status` — { user_email, request_title, new_status }
   - `announcement` — { condominium_id, announcement_title, announcement_url }
 - [x] Created Supabase Edge Function `supabase/functions/trigger-n8n-webhook/index.ts` — generic Deno function that POSTs to `N8N_WEBHOOK_BASE_URL/webhook/<workflow>` with `X-Webhook-Secret` header
+- [x] Edge function deployed: `supabase functions deploy trigger-n8n-webhook`
+- [x] Secrets set: `N8N_WEBHOOK_BASE_URL` and `N8N_WEBHOOK_SECRET`
+- [x] Fire-and-forget webhook calls wired into server actions: announcements, ballots, initiatives, maintenance
 - [x] Env vars documented: `N8N_WEBHOOK_BASE_URL`, `N8N_WEBHOOK_SECRET`
 - [x] Edge function excluded from Next.js TypeScript compilation via `tsconfig.json` exclude
 
@@ -87,11 +84,12 @@ Two notification channels: **in-app** (bell icon in navbar, Supabase Realtime) a
 
 ## Definition of Done
 
-- Bell icon shows unread count and updates in real-time via Supabase Realtime
-- Notifications are created for all specified events
-- Mark as read works for individual and all notifications
-- n8n webhook payload documentation is written (actual n8n setup is done outside of code)
-- Edge function for triggering n8n is deployed
+- [x] Bell icon shows unread count and updates in real-time via Supabase Realtime
+- [x] Notifications are created for all specified events
+- [x] Mark as read works for individual and all notifications
+- [x] n8n webhook payload documentation is written
+- [x] Edge function deployed and secrets configured
+- [x] Email notifications firing for: invitations, initiative status, ballot open, ballot results, maintenance status, announcements
 
 ---
 
