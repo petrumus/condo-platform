@@ -8,6 +8,7 @@ import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotificationForAllMembers } from "@/lib/notifications/create-notification"
 import { logAction } from "@/lib/audit/log-action"
+import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
 export type BallotStatus = "draft" | "open" | "closed" | "results_published"
 export type QuestionType = "yes_no" | "single_choice" | "multi_choice"
@@ -172,6 +173,15 @@ export async function openBallot(
       body: `"${ballot.title}" is now open for voting.`,
       linkUrl: `/app/${condominiumSlug}/ballots/${ballotId}`,
     })
+
+    // Fire-and-forget email via n8n
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+    void triggerN8nWebhook("ballot_open", {
+      condominium_id: condominium.id,
+      ballot_title: ballot.title,
+      close_at: ballot.close_at,
+      ballot_url: `${siteUrl}/app/${condominiumSlug}/ballots/${ballotId}`,
+    })
   }
 
   await logAction({
@@ -244,6 +254,14 @@ export async function publishResults(
       title: "Ballot results published",
       body: `Results for "${ballot.title}" are now available.`,
       linkUrl: `/app/${condominiumSlug}/ballots/${ballotId}/results`,
+    })
+
+    // Fire-and-forget email via n8n
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+    void triggerN8nWebhook("ballot_results", {
+      condominium_id: condominium.id,
+      ballot_title: ballot.title,
+      results_url: `${siteUrl}/app/${condominiumSlug}/ballots/${ballotId}/results`,
     })
   }
 

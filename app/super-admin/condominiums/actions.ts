@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createClient, createServiceClient } from "@/lib/supabase/server"
+import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
 async function requireSuperAdmin() {
   const authClient = await createClient()
@@ -139,14 +140,34 @@ export async function removeMember(memberId: string, condominiumId: string) {
 export async function inviteAdmin(condominiumId: string, email: string) {
   const { user, supabase } = await requireSuperAdmin()
 
-  const { error } = await supabase.from("invitations").insert({
-    condominium_id: condominiumId,
-    email: email.trim().toLowerCase(),
-    role: "admin",
-    created_by: user.id,
-  })
+  const { data: invitation, error } = await supabase
+    .from("invitations")
+    .insert({
+      condominium_id: condominiumId,
+      email: email.trim().toLowerCase(),
+      role: "admin",
+      created_by: user.id,
+    })
+    .select("token")
+    .single()
 
   if (error) throw new Error(error.message)
+
+  // Fire-and-forget invitation email via n8n
+  if (invitation) {
+    const { data: condo } = await supabase
+      .from("condominiums")
+      .select("name")
+      .eq("id", condominiumId)
+      .single()
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+    void triggerN8nWebhook("invitation", {
+      email: email.trim().toLowerCase(),
+      invite_url: `${siteUrl}/invite/${invitation.token}`,
+      condominium_name: condo?.name ?? "",
+    })
+  }
 
   revalidatePath(`/super-admin/condominiums/${condominiumId}`)
 }

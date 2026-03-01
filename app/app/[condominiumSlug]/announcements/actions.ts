@@ -8,6 +8,7 @@ import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotificationForAllMembers } from "@/lib/notifications/create-notification"
 import { logAction } from "@/lib/audit/log-action"
+import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
 const ALLOWED_MIME_TYPES = [
   "application/pdf",
@@ -137,6 +138,14 @@ export async function publishAnnouncement(
     title: "New announcement",
     body: title,
     linkUrl: `/app/${condominiumSlug}/announcements/${announcement.id}`,
+  })
+
+  // Fire-and-forget email via n8n
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  void triggerN8nWebhook("announcement", {
+    condominium_id: condominium.id,
+    announcement_title: title,
+    announcement_url: `${siteUrl}/app/${condominiumSlug}/announcements/${announcement.id}`,
   })
 
   await logAction({

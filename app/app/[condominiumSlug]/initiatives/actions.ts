@@ -8,6 +8,7 @@ import { getCondominium } from "@/lib/condominium/get-condominium"
 import { getUserRole } from "@/lib/condominium/get-user-role"
 import { createNotification } from "@/lib/notifications/create-notification"
 import { logAction } from "@/lib/audit/log-action"
+import { triggerN8nWebhook } from "@/lib/n8n/trigger-webhook"
 
 export type InitiativeStatus =
   | "draft"
@@ -114,6 +115,21 @@ export async function approveInitiative(
       body: `Your initiative "${initiative.title}" has been approved.`,
       linkUrl: `/app/${condominiumSlug}/initiatives/${initiativeId}`,
     })
+
+    // Fire-and-forget email via n8n
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("id", initiative.submitter_id)
+      .single()
+    if (profile?.email) {
+      void triggerN8nWebhook("initiative_status", {
+        user_email: profile.email,
+        initiative_title: initiative.title,
+        new_status: "approved",
+        rejection_reason: null,
+      })
+    }
   }
 
   await logAction({
@@ -164,6 +180,21 @@ export async function rejectInitiative(
         : `Your initiative "${initiative.title}" was not approved.`,
       linkUrl: `/app/${condominiumSlug}/initiatives/${initiativeId}`,
     })
+
+    // Fire-and-forget email via n8n
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("id", initiative.submitter_id)
+      .single()
+    if (profile?.email) {
+      void triggerN8nWebhook("initiative_status", {
+        user_email: profile.email,
+        initiative_title: initiative.title,
+        new_status: "rejected",
+        rejection_reason: reason.trim() || null,
+      })
+    }
   }
 
   await logAction({
