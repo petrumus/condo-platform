@@ -66,3 +66,13 @@ Every tenant workspace is a row in the `condominiums` table. All other tables re
 - The `slug` field on `condominiums` must be URL-safe (lowercase, hyphens only)
 - RLS should be enabled on ALL tables before any data is inserted
 - `functional_titles` has built-in entries per-condominium (created when a condominium is created) plus custom ones admins can add
+
+### Hotfix: RLS Infinite Recursion (2026-03-01)
+
+**Problem:** RLS policies on `condominium_members` used inline `EXISTS(SELECT 1 FROM condominium_members ...)` subqueries. PostgreSQL applies RLS to those inner queries, re-triggering the same policies — causing error 42P17 "infinite recursion detected in policy". This blocked ALL RLS-enabled queries on `condominium_members`, `condominiums`, and `functional_titles`, causing: tenant layout 404s, middleware redirecting to `/pending`, super-admin detail page showing 0 members.
+
+**Fix:** Migration `20260301000000_fix_rls_recursion.sql`:
+1. Created `is_member(condominium_id)` as a `SECURITY DEFINER` function (bypasses RLS internally)
+2. Replaced 6 self-referencing policies on `condominium_members`, `condominiums`, and `functional_titles` to use `is_member()` / `is_admin()` function calls instead of inline subqueries
+
+**Important pattern:** Any RLS policy on table X must NEVER use an inline subquery that reads from table X. Always use a `SECURITY DEFINER` helper function instead.
